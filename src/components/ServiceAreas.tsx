@@ -1,24 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-
-function useFadeUp(ref: React.RefObject<HTMLElement | null>) {
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add('visible');
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [ref]);
-}
+import { motion } from 'framer-motion';
+import { fadeUp, staggerContainer, viewportConfig } from '@/lib/variants';
 
 const services = [
   {
@@ -64,91 +47,63 @@ const services = [
 ];
 
 export default function ServiceAreas() {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-  useFadeUp(headerRef);
-  useFadeUp(gridRef);
-
   return (
-    <section
-      id="service-areas"
-      className="section-pad"
-      style={{ background: 'var(--bg-white)' }}
-    >
-      <div
-        style={{
-          maxWidth: '1280px',
-          margin: '0 auto',
-          padding: '0 1.5rem',
-        }}
-      >
-        {/* Header */}
-        <div ref={headerRef} className="fade-up" style={{ marginBottom: '4rem' }}>
+    <section id="service-areas" className="section-pad" style={{ background: 'var(--bg-white)' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
+
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          style={{ marginBottom: '4rem' }}
+        >
           <span className="eyebrow">What We Do</span>
           <span className="gold-rule" />
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
-            Four Avenues of Service
-          </h2>
-        </div>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>Four Avenues of Service</h2>
+        </motion.div>
 
-        {/* Cards grid */}
-        <div
-          ref={gridRef}
-          className="fade-up stagger"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '1.5rem',
-          }}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}
         >
           {services.map((s) => (
-            <div
-              key={s.title}
-              style={{
-                borderTop: '3px solid var(--blue-mid)',
-                padding: '2rem 1.75rem',
-                background: 'var(--bg-off-white)',
-                transition: 'box-shadow 0.25s ease, transform 0.25s ease',
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.boxShadow =
-                  '0 8px 32px rgba(23,69,143,0.10)';
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)';
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
-                (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)';
-              }}
-            >
-              <div style={{ color: 'var(--blue-mid)', marginBottom: '1.25rem' }}>
-                {s.icon}
-              </div>
-              <h3
+            // Outer div handles stagger entrance
+            <motion.div key={s.title} variants={fadeUp}>
+              {/* Inner div handles hover */}
+              <motion.div
+                whileHover={{ y: -6, boxShadow: '0 16px 40px rgba(23,69,143,0.12)' }}
+                transition={{ type: 'spring', stiffness: 380, damping: 22 }}
                 style={{
+                  borderTop: '3px solid var(--blue-mid)',
+                  padding: '2rem 1.75rem',
+                  background: 'var(--bg-off-white)',
+                  height: '100%',
+                }}
+              >
+                <motion.div
+                  style={{ color: 'var(--blue-mid)', marginBottom: '1.25rem' }}
+                  whileHover={{ scale: 1.2, color: 'var(--gold-bright)' }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+                >
+                  {s.icon}
+                </motion.div>
+                <h3 style={{
                   fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",
-                  fontWeight: 700,
-                  fontSize: '1.25rem',
-                  color: 'var(--blue-mid)',
-                  margin: '0 0 0.875rem',
-                }}
-              >
-                {s.title}
-              </h3>
-              <p
-                style={{
+                  fontWeight: 700, fontSize: '1.25rem', color: 'var(--blue-mid)', margin: '0 0 0.875rem',
+                }}>{s.title}</h3>
+                <p style={{
                   fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
-                  fontWeight: 300,
-                  fontSize: '0.9375rem',
-                  lineHeight: 1.8,
-                  color: 'var(--ink-mid)',
-                  margin: 0,
-                }}
-              >
-                {s.body}
-              </p>
-            </div>
+                  fontWeight: 300, fontSize: '0.9375rem', lineHeight: 1.8,
+                  color: 'var(--ink-mid)', margin: 0,
+                }}>{s.body}</p>
+              </motion.div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

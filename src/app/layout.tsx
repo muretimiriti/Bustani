@@ -40,7 +40,7 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${jost.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col antialiased">
+      <body className="min-h-full flex flex-col antialiased" suppressHydrationWarning>
         <Navbar />
         {children}
         <Footer />
