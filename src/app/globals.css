@@ -1,26 +1,243 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS — Rotary Club of Northlands Bustani
+   ───────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Rotary Blue Scale */
+  --blue-dark:  #0d2c5e;
+  --blue-mid:   #17458f;
+  --blue-tint:  #4a7bc8;
+  --blue-ghost: #e8eef7;
+
+  /* Gold */
+  --gold-deep:   #9a6e0e;
+  --gold-bright: #c8921a;
+
+  /* Backgrounds — 5-stop warm scale */
+  --bg-white:      #ffffff;
+  --bg-off-white:  #faf7f2;
+  --bg-sand-light: #f5f0e8;
+  --bg-sand:       #ede7da;
+  --bg-sand-deep:  #e3dace;
+
+  /* Text — warm near-black (ink on paper) */
+  --ink:       #2a2418;
+  --ink-mid:   #4a3f2f;
+  --ink-light: #7a6e5e;
+  --ink-muted: #a09080;
+  --ink-rule:  #d4c8b8;
 }
 
+/* ─────────────────────────────────────────────
+   THEME TOKENS (Tailwind v4 inline theme)
+   ───────────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg-white);
+  --color-foreground: var(--ink);
+
+  --font-display: var(--font-playfair);
+  --font-body:    var(--font-jost);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─────────────────────────────────────────────
+   BASE RESET & TYPOGRAPHY
+   ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-white);
+  color: var(--ink);
+  font-family: var(--font-jost), 'Jost', system-ui, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  color: var(--blue-mid);
+  line-height: 1.15;
+}
+
+/* ─────────────────────────────────────────────
+   SECTION UTILITIES
+   ───────────────────────────────────────────── */
+.section-pad {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+@media (min-width: 768px) {
+  .section-pad {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+  }
+}
+
+/* Eyebrow label style */
+.eyebrow {
+  font-family: var(--font-jost), 'Jost', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+/* Gold rule under eyebrow */
+.gold-rule {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--gold-bright);
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL-FADE ANIMATION
+   ───────────────────────────────────────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-up {
+  opacity: 0;
+}
+
+.fade-up.visible {
+  animation: fadeUp 0.7s ease forwards;
+}
+
+/* Stagger delays for child elements */
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 100ms; }
+.stagger > *:nth-child(3) { animation-delay: 200ms; }
+.stagger > *:nth-child(4) { animation-delay: 300ms; }
+
+/* ─────────────────────────────────────────────
+   BUTTON STYLES
+   ───────────────────────────────────────────── */
+.btn-gold {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  background: var(--gold-bright);
+  color: #ffffff;
+  font-family: var(--font-jost), 'Jost', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 0.8125rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid var(--gold-bright);
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-gold:hover {
+  background: var(--gold-deep);
+  border-color: var(--gold-deep);
+}
+
+.btn-outline-white {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  background: transparent;
+  color: #ffffff;
+  font-family: var(--font-jost), 'Jost', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 0.8125rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  transition: background 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-outline-white:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-outline-blue {
+  display: inline-block;
+  padding: 0.875rem 2rem;
+  background: transparent;
+  color: #ffffff;
+  font-family: var(--font-jost), 'Jost', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 0.8125rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition: background 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-outline-blue:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+/* ─────────────────────────────────────────────
+   NAV LINK UNDERLINE SWEEP
+   ───────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  text-decoration: none;
+  padding-bottom: 2px;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--blue-mid);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link-white::after {
+  background: #ffffff;
+}
+
+/* ─────────────────────────────────────────────
+   SCROLLBAR (subtle)
+   ───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-off-white);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ink-rule);
+  border-radius: 3px;
 }
