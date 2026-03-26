@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Jost } from "next/font/google";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -38,7 +40,11 @@ export default function RootLayout({
       lang="en"
       className={`${playfair.variable} ${jost.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col antialiased">{children}</body>
+      <body className="min-h-full flex flex-col antialiased">
+        <Navbar />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
