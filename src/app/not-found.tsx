@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <main style={{ paddingTop: '72px', minHeight: '80vh', display: 'flex', alignItems: 'center' }}>
+    <main style={{ paddingTop: '142px', minHeight: '80vh', display: 'flex', alignItems: 'center' }}>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '6rem 1.5rem', textAlign: 'center' }}>
         <span style={{
           fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",

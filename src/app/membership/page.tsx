@@ -62,7 +62,7 @@ const faqs = [
 
 export default function MembershipPage() {
   return (
-    <main style={{ paddingTop: '72px' }}>
+    <main style={{ paddingTop: '142px' }}>
       <PageHero
         eyebrow="Membership"
         title="Become a Rotarian"

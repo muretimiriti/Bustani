@@ -108,6 +108,7 @@ export default function AboutRotary() {
               src={wheelImg}
               alt="Rotary Wheel — Mark of Excellence"
               fill
+              sizes="(max-width: 768px) 100vw, 340px"
               style={{ objectFit: 'contain', padding: '1rem' }}
             />
           </motion.div>

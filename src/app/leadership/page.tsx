@@ -38,7 +38,7 @@ const committees = [
 
 export default function LeadershipPage() {
   return (
-    <main style={{ paddingTop: '72px' }}>
+    <main style={{ paddingTop: '142px' }}>
       <PageHero
         eyebrow="Club Leadership"
         title="Our Board & Officers"

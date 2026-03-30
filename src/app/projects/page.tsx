@@ -59,7 +59,7 @@ const focusAreas = [
 
 export default function ProjectsPage() {
   return (
-    <main style={{ paddingTop: '72px' }}>
+    <main style={{ paddingTop: '142px' }}>
       <PageHero
         eyebrow="Service in Action"
         title="Our Projects"

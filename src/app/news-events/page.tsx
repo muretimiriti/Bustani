@@ -86,7 +86,7 @@ const typeColors: Record<string, string> = {
 
 export default function NewsEventsPage() {
   return (
-    <main style={{ paddingTop: '72px' }}>
+    <main style={{ paddingTop: '142px' }}>
       <PageHero
         eyebrow="Stay Connected"
         title="News & Events"

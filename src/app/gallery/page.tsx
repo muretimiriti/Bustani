@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function GalleryPage() {
   return (
-    <main style={{ paddingTop: '72px' }}>
+    <main style={{ paddingTop: '142px' }}>
       <PageHero
         eyebrow="A Growing Archive"
         title="Gallery"

@@ -95,17 +95,17 @@ export default function Navbar() {
     }}>
       <div style={{
         maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem',
-        height: '72px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        height: '142px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         {/* Logo */}
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
           <motion.div whileHover={{ scale: 1.04 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
             <Image
               src={logo}
               alt="Rotary Club of Northlands Bustani"
-              height={48}
+              height={140}
               style={{
-                height: '48px', width: 'auto',
+                height: '140px', width: 'auto',
                 filter: opaque ? 'none' : 'brightness(0) invert(1)',
                 transition: 'filter 0.35s ease',
               }}

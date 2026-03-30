@@ -39,6 +39,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${playfair.variable} ${jost.variable} h-full`}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-full flex flex-col antialiased" suppressHydrationWarning>
         <Navbar />
