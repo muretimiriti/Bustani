@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { staggerContainer, heroItem, viewportConfig } from '@/lib/variants';
 
@@ -78,24 +79,24 @@ export default function JoinSection() {
           </motion.p>
 
           <motion.div variants={heroItem} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <motion.a
-              href="mailto:info@northlandsbustani.org"
-              className="btn-gold"
+            <motion.div
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
-              Apply for Membership
-            </motion.a>
-            <motion.a
-              href="mailto:info@northlandsbustani.org"
-              className="btn-outline-blue"
+              <Link href="/membership" className="btn-gold">
+                Apply for Membership
+              </Link>
+            </motion.div>
+            <motion.div
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
-              Contact Us
-            </motion.a>
+              <Link href="/contact" className="btn-outline-blue">
+                Contact Us
+              </Link>
+            </motion.div>
           </motion.div>
         </motion.div>
       </div>
