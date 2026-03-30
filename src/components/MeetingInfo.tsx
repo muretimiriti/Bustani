@@ -45,8 +45,8 @@ export default function MeetingInfo() {
         <motion.div variants={staggerContainer} style={{ display: 'flex', flexWrap: 'wrap', gap: '2.5rem' }}>
           {[
             { label: 'Day', value: 'Every Thursday' },
-            { label: 'Time', value: '6:30 PM' },
-            { label: 'Venue', value: 'Northlands, Nairobi' },
+            { label: 'Time', value: '7:00 PM' },
+            { label: 'Venue', value: 'Bedarin Hotel, Kihunguro' },
           ].map((item) => (
             <motion.div
               key={item.label}

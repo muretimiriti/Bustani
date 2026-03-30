@@ -5,21 +5,27 @@ import { fadeUp, slideInLeft, staggerContainer, viewportConfig } from '@/lib/var
 
 const timeline = [
   {
-    date: 'Mid 2025',
+    date: 'July 2025',
     title: 'The Seed is Planted',
-    body: 'A circle of committed professionals begins gathering in Northlands. Weekly meetings take shape — building fellowship, defining purpose, and laying the groundwork for something enduring.',
+    body: 'A group of committed professionals begins gathering in Northlands under the wing of the Rotary Club of Juja, operating as a satellite club. Weekly meetings at Bedarin Hotel, Kihunguro take shape — building fellowship, exploring Rotary\'s values, and laying the groundwork for something enduring.',
     isCharter: false,
   },
   {
-    date: 'Early 2026',
-    title: 'Earning Our Charter',
-    body: 'The club completes all Rotary International requirements. Under the sponsorship of the Rotary Club of Juja, the club formally petitions for official charter status.',
+    date: 'September 2025',
+    title: 'We Become Bustani',
+    body: 'Membership grows rapidly. The group adopts the name "Bustani" — Swahili for garden — capturing the vision of cultivation and growth at the heart of the club. The decision is made to pursue full independent charter status.',
+    isCharter: false,
+  },
+  {
+    date: 'December 2025',
+    title: 'Service Begins',
+    body: 'With 35 active members, the club launches its first major service projects: the Gachororo Community Medical Camp (600+ people served) and the YoungLife Africa Early Christmas Visit. The club demonstrates it is ready to charter.',
     isCharter: false,
   },
   {
     date: '23 March 2026',
     title: 'Charter Day',
-    body: 'The Rotary Club of Northlands Bustani is officially chartered. A historic milestone for our members, our families, and every community we will serve.',
+    body: 'The Rotary Club of Northlands Bustani is officially chartered by Rotary International, sponsored by the Rotary Club of Juja. A historic milestone for our 35 members, our families, and every community we will serve.',
     isCharter: true,
   },
 ];

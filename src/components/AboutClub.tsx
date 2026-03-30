@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer, staggerFast, viewportConfig } from '@/lib/variants';
 
 const stats = [
+  { label: 'Active Members', value: '35' },
   { label: 'Chartered', value: 'March 2026' },
   { label: 'District', value: '9212' },
   { label: 'Country', value: 'Kenya' },
@@ -41,8 +42,10 @@ export default function AboutClub() {
             fontWeight: 300, fontSize: '1.0625rem', lineHeight: 1.85,
             color: 'var(--ink-mid)', marginBottom: '3rem',
           }}>
-            We began as a gathering of like-minded professionals who believed that service is not
-            merely an act, but a way of life. From our very first meeting, we have been
+            We began as a satellite club under the Rotary Club of Juja in July 2025, growing rapidly
+            into a community of 35 dedicated professionals. In September 2025 we adopted the name
+            "Bustani" and set our sights on full charter — achieving it on 23 March 2026. From our
+            first meeting to our first medical camp serving over 600 people, we have been
             cultivating a garden of change — one project, one partnership, one member at a time.
           </motion.p>
         </motion.div>

@@ -76,8 +76,8 @@ export default function ContactPage() {
           <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap' }}>
             {[
               { label: 'Day', value: 'Every Thursday' },
-              { label: 'Time', value: '6:30 PM' },
-              { label: 'Venue', value: 'Northlands City, Nairobi' },
+              { label: 'Time', value: '7:00 PM' },
+              { label: 'Venue', value: 'Bedarin Hotel, Kihunguro' },
             ].map((item) => (
               <div key={item.label}>
                 <p style={{
@@ -192,9 +192,19 @@ export default function ContactPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               {[
                 {
+                  label: 'Phone', icon: '✆',
+                  value: '0794 607020 / 0721 313219',
+                  href: 'tel:+254794607020',
+                },
+                {
                   label: 'Email', icon: '✉',
                   value: 'info@northlandsbustani.org',
                   href: 'mailto:info@northlandsbustani.org',
+                },
+                {
+                  label: 'Social Media', icon: '◎',
+                  value: '@rotaryclubofnorthlandsbustani',
+                  href: undefined,
                 },
                 {
                   label: 'Rotary International', icon: '⬡',

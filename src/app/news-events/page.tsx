@@ -12,14 +12,14 @@ const upcomingEvents = [
     date: 'Every Thursday',
     month: 'Weekly',
     title: 'Regular Club Meeting',
-    description: 'Our weekly fellowship and business meeting. Guests welcome — come and see what Rotary looks like from the inside.',
+    description: 'Our weekly fellowship and business meeting at Bedarin Hotel, Kihunguro from 7:00 PM. Guests welcome — come and see what Rotary looks like from the inside.',
     type: 'Meeting',
   },
   {
     date: '23 March',
     month: 'Annual',
     title: 'Charter Anniversary Celebration',
-    description: 'Marking the anniversary of our official charter. A celebration of the members, the community, and the year of service ahead.',
+    description: 'Marking the anniversary of our official charter — 23 March 2026. A celebration of the members, the community, and the year of service ahead.',
     type: 'Celebration',
   },
   {
@@ -43,19 +43,37 @@ const news = [
     date: '23 March 2026',
     title: 'Rotary Club of Northlands Bustani Officially Chartered',
     excerpt:
-      'After nearly six months of preparation and fellowship, the Rotary Club of Northlands Bustani received its official charter from Rotary International, sponsored by the Rotary Club of Juja — District 9212.',
+      'After eight months of dedicated preparation, the Rotary Club of Northlands Bustani received its official charter from Rotary International, sponsored by the Rotary Club of Juja — District 9212. The club becomes the newest member of the District 9212 family.',
   },
   {
-    date: 'March 2026',
-    title: 'Northlands Bustani Joins District 9212 Family',
+    date: '21 December 2025',
+    title: 'YoungLife Africa Early Christmas Visit — 100+ Lives Touched',
     excerpt:
-      'Our club has been warmly welcomed into the Rotary District 9212 family, joining a network of clubs across Kenya committed to service, fellowship, and humanitarian impact.',
+      'Seven Rotary and Rotaract clubs joined the Rotary Club of Northlands Bustani IF for a day of fellowship with YoungLife Africa — cooking, games, mentorship, and vertical garden building. The clubs raised KES 53,500 in cash and significant in-kind contributions.',
   },
   {
-    date: 'Mid 2025',
-    title: 'Founding Members Begin Weekly Meetings',
+    date: '12–13 December 2025',
+    title: 'Gachororo Community Medical Camp — 600+ Patients Served',
     excerpt:
-      'A circle of committed professionals gathers in Northlands for the first time — planting the seed that would grow into the Rotary Club of Northlands Bustani.',
+      'In partnership with the Rotary Club of Juja and the Rotaract Club of Youth Connect Kenya, we conducted a two-day medical camp at Gachororo offering general consultation, cancer and eye screenings, ENT care, HIV testing, mental health support, and medication — serving over 600 community members.',
+  },
+  {
+    date: 'November 2025',
+    title: 'Club Assembly & Investment 101 Fellowship',
+    excerpt:
+      'The club held its first formal Club Assembly in November, followed by a well-attended "Investment 101" fellowship exploring financial literacy and vocational development among members.',
+  },
+  {
+    date: 'October 2025',
+    title: 'Men\'s Mental Health Fellowship with Athi Kapiti Rotary',
+    excerpt:
+      'A joint fellowship with the Rotary Club of Athi Kapiti focused on men\'s mental health — opening an honest conversation on wellbeing, stress, and peer support in the professional community.',
+  },
+  {
+    date: 'September 2025',
+    title: 'Rotary 101 Training & Club Formally Named Bustani',
+    excerpt:
+      'The growing satellite club completed its second Rotary 101 training session and officially adopted the name "Bustani" — Swahili for garden — setting a clear vision for its charter journey.',
   },
 ];
 
@@ -91,12 +109,12 @@ export default function NewsEventsPage() {
               Weekly Meeting
             </p>
             <h2 style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)', color: 'var(--blue-mid)', margin: 0 }}>
-              Every Thursday at 6:30 PM
+              Every Thursday at 7:00 PM
             </h2>
           </div>
           <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap' }}>
             {[
-              { label: 'Venue', value: 'Northlands City, Nairobi' },
+              { label: 'Venue', value: 'Bedarin Hotel, Kihunguro' },
               { label: 'Frequency', value: 'Weekly, year-round' },
               { label: 'Guests', value: 'Always welcome' },
             ].map((item) => (
