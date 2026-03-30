@@ -10,6 +10,7 @@ const quickLinks = [
   { label: 'Our Projects', href: '/projects', isPage: true },
   { label: 'News & Events', href: '/news-events', isPage: true },
   { label: 'Gallery', href: '/gallery', isPage: true },
+  { label: 'Leadership', href: '/leadership', isPage: true },
   { label: 'Membership', href: '/membership', isPage: true },
   { label: 'Contact', href: '/contact', isPage: true },
 ];
@@ -97,8 +98,9 @@ export default function Footer() {
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
             {[
+              { label: 'Phone', value: '0794 607020', href: 'tel:+254794607020' },
               { label: 'Email', value: 'info@northlandsbustani.org', href: 'mailto:info@northlandsbustani.org' },
-              { label: 'Location', value: 'Northlands, Kenya', href: undefined },
+              { label: 'Venue', value: 'Bedarin Hotel, Kihunguro', href: undefined },
               { label: 'District', value: 'Rotary International District 9212', href: undefined },
             ].map((item) => (
               <div key={item.label}>
@@ -154,6 +156,38 @@ export default function Footer() {
           >
             rotary.org &rarr;
           </a>
+
+          <div style={{ marginTop: '1.5rem' }}>
+            <p style={{
+              fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+              fontWeight: 300, fontSize: '0.7rem', letterSpacing: '0.22em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', margin: '0 0 0.75rem',
+            }}>Follow Us</p>
+            <a
+              href="https://www.instagram.com/rotaryclubofnorthlandsbustani"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                fontWeight: 300, fontSize: '0.875rem',
+                color: 'rgba(255,255,255,0.65)', textDecoration: 'none', display: 'block', marginBottom: '0.5rem',
+              }}
+            >
+              Instagram &rarr;
+            </a>
+            <a
+              href="https://www.facebook.com/rotaryclubofnorthlandsbustani"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                fontWeight: 300, fontSize: '0.875rem',
+                color: 'rgba(255,255,255,0.65)', textDecoration: 'none', display: 'block',
+              }}
+            >
+              Facebook &rarr;
+            </a>
+          </div>
         </div>
       </div>
 

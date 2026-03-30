@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import logo from '@/app/images/Rotary Logo_EN21.png';
 
 const navLinks = [
@@ -12,29 +12,30 @@ const navLinks = [
   { label: 'Projects', href: '/projects', isPage: true },
   { label: 'Gallery', href: '/gallery', isPage: true },
   { label: 'News & Events', href: '/news-events', isPage: true },
+  { label: 'Leadership', href: '/leadership', isPage: true },
   { label: 'Contact', href: '/contact', isPage: true },
 ];
 
-const drawerVariants = {
+const drawerVariants: Variants = {
   hidden: { opacity: 0, height: 0 },
   visible: {
     opacity: 1,
     height: 'auto',
-    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const },
   },
   exit: {
     opacity: 0,
     height: 0,
-    transition: { duration: 0.2, ease: 'easeIn' },
+    transition: { duration: 0.2, ease: 'easeIn' as const },
   },
 };
 
-const drawerItemVariants = {
+const drawerItemVariants: Variants = {
   hidden: { opacity: 0, x: -12 },
   visible: (i: number) => ({
     opacity: 1,
     x: 0,
-    transition: { delay: i * 0.06, duration: 0.3, ease: 'easeOut' },
+    transition: { delay: i * 0.06, duration: 0.3, ease: 'easeOut' as const },
   }),
   exit: { opacity: 0, x: -8, transition: { duration: 0.15 } },
 };
