@@ -260,7 +260,7 @@ export default function MembershipPage() {
           width: '30rem', height: '30rem', borderRadius: '50%',
           border: '1px solid rgba(255,255,255,0.06)', pointerEvents: 'none',
         }} />
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem', position: 'relative', zIndex: 1, maxWidth: '640px' } as React.CSSProperties}>
+        <div style={{ maxWidth: '640px', margin: '0 auto', padding: '0 1.5rem', position: 'relative', zIndex: 1 }}>
           <h2 style={{
             fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",
             fontWeight: 700, fontSize: 'clamp(2rem, 4vw, 2.75rem)', color: '#ffffff', margin: '0 0 1.25rem',

@@ -4,17 +4,35 @@ import { useState } from 'react';
 import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 
+// Replace FORMSPREE_ID with your Formspree endpoint ID once set up at formspree.io
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/FORMSPREE_ID';
+
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    setError(false);
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    }
   }
 
   const inputStyle: React.CSSProperties = {
@@ -122,6 +140,31 @@ export default function ContactPage() {
                 }}>
                   Thank you for reaching out. A member of our team will respond shortly.
                 </p>
+              </div>
+            ) : error ? (
+              <div style={{
+                background: '#fff5f5', padding: '2rem',
+                borderLeft: '3px solid #c0392b',
+              }}>
+                <h3 style={{ fontSize: '1.125rem', color: '#c0392b', marginBottom: '0.5rem' }}>
+                  Message Not Sent
+                </h3>
+                <p style={{
+                  fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                  fontWeight: 300, fontSize: '0.9375rem', color: 'var(--ink-mid)', margin: '0 0 1rem',
+                }}>
+                  Something went wrong. Please email us directly at{' '}
+                  <a href="mailto:info@northlandsbustani.org" style={{ color: 'var(--blue-mid)' }}>
+                    info@northlandsbustani.org
+                  </a>.
+                </p>
+                <button
+                  onClick={() => setError(false)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--blue-mid)', padding: 0,
+                    fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif", fontSize: '0.875rem' }}
+                >
+                  Try again &rarr;
+                </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
