@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer, staggerFast, viewportConfig } from '@/lib/variants';
 
@@ -50,34 +51,57 @@ export default function AboutClub() {
           </motion.p>
         </motion.div>
 
-        {/* Bustani callout */}
+        {/* Dual callout — Bustani + Ubuntu */}
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={viewportConfig}
-          whileHover={{ x: 4 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-          style={{
-            borderLeft: '3px solid var(--gold-bright)',
-            paddingLeft: '2rem', marginBottom: '3.5rem', maxWidth: '640px',
-          }}
+          style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '3.5rem' }}
         >
-          <p style={{
-            fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",
-            fontWeight: 700, fontStyle: 'italic',
-            fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
-            color: 'var(--blue-mid)', lineHeight: 1.4, margin: '0 0 0.75rem',
-          }}>
-            &ldquo;Bustani — a garden, a place of cultivation and growth.&rdquo;
-          </p>
-          <p style={{
-            fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
-            fontWeight: 300, fontSize: '0.8125rem', letterSpacing: '0.1em',
-            textTransform: 'uppercase', color: 'var(--gold-deep)', margin: 0,
-          }}>
-            Bustani (boo-STAH-nee) &mdash; Swahili, from Arabic بُسْتَان
-          </p>
+          <motion.div
+            whileHover={{ x: 4 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            style={{ borderLeft: '3px solid var(--gold-bright)', paddingLeft: '2rem', flex: '1 1 280px', maxWidth: '440px' }}
+          >
+            <p style={{
+              fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",
+              fontWeight: 700, fontStyle: 'italic',
+              fontSize: 'clamp(1.125rem, 2vw, 1.5rem)',
+              color: 'var(--blue-mid)', lineHeight: 1.4, margin: '0 0 0.5rem',
+            }}>
+              &ldquo;Bustani — a garden, a place of cultivation and growth.&rdquo;
+            </p>
+            <p style={{
+              fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+              fontWeight: 300, fontSize: '0.8125rem', letterSpacing: '0.1em',
+              textTransform: 'uppercase', color: 'var(--gold-deep)', margin: 0,
+            }}>
+              Bustani (boo-STAH-nee) &mdash; Swahili, from Arabic بُسْتَان
+            </p>
+          </motion.div>
+
+          <motion.div
+            whileHover={{ x: 4 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            style={{ borderLeft: '3px solid var(--blue-tint)', paddingLeft: '2rem', flex: '1 1 280px', maxWidth: '440px' }}
+          >
+            <p style={{
+              fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",
+              fontWeight: 700, fontStyle: 'italic',
+              fontSize: 'clamp(1.125rem, 2vw, 1.5rem)',
+              color: 'var(--blue-mid)', lineHeight: 1.4, margin: '0 0 0.5rem',
+            }}>
+              &ldquo;Ubuntu — I am because we are.&rdquo;
+            </p>
+            <p style={{
+              fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+              fontWeight: 300, fontSize: '0.8125rem', letterSpacing: '0.1em',
+              textTransform: 'uppercase', color: 'var(--ink-light)', margin: 0,
+            }}>
+              Ubuntu (oo-BOON-too) &mdash; Nguni Bantu philosophy of shared humanity
+            </p>
+          </motion.div>
         </motion.div>
 
         {/* Stat pills */}
@@ -109,6 +133,20 @@ export default function AboutClub() {
               }}>{s.value}</p>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* CTAs */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '2.5rem' }}
+        >
+          <Link href="/membership" className="btn-gold">Become a Member</Link>
+          <Link href="/#charter-story" className="btn-outline-white" style={{ color: 'var(--blue-mid)', borderColor: 'var(--blue-mid)' }}>
+            Our Story
+          </Link>
         </motion.div>
       </div>
     </section>

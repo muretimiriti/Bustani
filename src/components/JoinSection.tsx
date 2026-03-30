@@ -72,6 +72,15 @@ export default function JoinSection() {
           <motion.p variants={heroItem} style={{
             fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
             fontWeight: 300, fontSize: '1.0625rem', lineHeight: 1.85,
+            color: 'rgba(255,255,255,0.75)', margin: '0 0 0.875rem',
+          }}>
+            We are guided by two African philosophies that speak to who we are: <em>Bustani</em> —
+            a garden cultivated with intention — and <em>Ubuntu</em> — the understanding that
+            we rise together, because none of us flourishes alone.
+          </motion.p>
+          <motion.p variants={heroItem} style={{
+            fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+            fontWeight: 300, fontSize: '1.0625rem', lineHeight: 1.85,
             color: 'rgba(255,255,255,0.75)', margin: '0 0 2.75rem',
           }}>
             We welcome established professionals who are ready to invest their skills, networks,

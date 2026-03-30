@@ -103,9 +103,9 @@ export default function Navbar() {
             <Image
               src={logo}
               alt="Rotary Club of Northlands Bustani"
-              height={36}
+              height={48}
               style={{
-                height: '36px', width: 'auto',
+                height: '48px', width: 'auto',
                 filter: opaque ? 'none' : 'brightness(0) invert(1)',
                 transition: 'filter 0.35s ease',
               }}

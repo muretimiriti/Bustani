@@ -12,7 +12,7 @@ const upcomingEvents = [
     date: 'Every Thursday',
     month: 'Weekly',
     title: 'Regular Club Meeting',
-    description: 'Our weekly fellowship and business meeting at Bedarin Hotel, Kihunguro from 7:00 PM. Guests welcome — come and see what Rotary looks like from the inside.',
+    description: 'Our weekly fellowship and business meeting at Bedarin Hotel, Bypass from 7:00 PM. Guests welcome — come and see what Rotary looks like from the inside.',
     type: 'Meeting',
   },
   {
@@ -114,7 +114,7 @@ export default function NewsEventsPage() {
           </div>
           <div style={{ display: 'flex', gap: '3rem', flexWrap: 'wrap' }}>
             {[
-              { label: 'Venue', value: 'Bedarin Hotel, Kihunguro' },
+              { label: 'Venue', value: 'Bedarin Hotel, Bypass' },
               { label: 'Frequency', value: 'Weekly, year-round' },
               { label: 'Guests', value: 'Always welcome' },
             ].map((item) => (

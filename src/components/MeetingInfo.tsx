@@ -46,7 +46,7 @@ export default function MeetingInfo() {
           {[
             { label: 'Day', value: 'Every Thursday' },
             { label: 'Time', value: '7:00 PM' },
-            { label: 'Venue', value: 'Bedarin Hotel, Kihunguro' },
+            { label: 'Venue', value: 'Bedarin Hotel, Bypass' },
           ].map((item) => (
             <motion.div
               key={item.label}

@@ -7,7 +7,7 @@ const timeline = [
   {
     date: 'July 2025',
     title: 'The Seed is Planted',
-    body: 'A group of committed professionals begins gathering in Northlands under the wing of the Rotary Club of Juja, operating as a satellite club. Weekly meetings at Bedarin Hotel, Kihunguro take shape — building fellowship, exploring Rotary\'s values, and laying the groundwork for something enduring.',
+    body: 'A group of committed professionals begins gathering in Northlands under the wing of the Rotary Club of Juja, operating as a satellite club. Weekly meetings at Bedarin Hotel, Bypass take shape — building fellowship, exploring Rotary\'s values, and laying the groundwork for something enduring.',
     isCharter: false,
   },
   {

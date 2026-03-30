@@ -49,7 +49,7 @@ export default function Footer() {
             color: 'rgba(255,255,255,0.5)', margin: 0,
           }}>
             A professional service organisation rooted in Northlands, Kenya.
-            Part of Rotary International District 9212.
+            Guided by Bustani and Ubuntu. Part of Rotary International District 9212.
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export default function Footer() {
             {[
               { label: 'Phone', value: '0794 607020', href: 'tel:+254794607020' },
               { label: 'Email', value: 'info@northlandsbustani.org', href: 'mailto:info@northlandsbustani.org' },
-              { label: 'Venue', value: 'Bedarin Hotel, Kihunguro', href: undefined },
+              { label: 'Venue', value: 'Bedarin Hotel, Bypass', href: undefined },
               { label: 'District', value: 'Rotary International District 9212', href: undefined },
             ].map((item) => (
               <div key={item.label}>

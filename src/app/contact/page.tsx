@@ -95,7 +95,7 @@ export default function ContactPage() {
             {[
               { label: 'Day', value: 'Every Thursday' },
               { label: 'Time', value: '7:00 PM' },
-              { label: 'Venue', value: 'Bedarin Hotel, Kihunguro' },
+              { label: 'Venue', value: 'Bedarin Hotel, Bypass' },
             ].map((item) => (
               <div key={item.label}>
                 <p style={{

@@ -33,7 +33,7 @@ const steps = [
     number: '03',
     title: 'Apply',
     body: 'A current member sponsors your membership. Your application is reviewed and voted on by the board. Welcome to Rotary.',
-    action: { label: 'Apply Now', href: 'mailto:info@northlandsbustani.org' },
+    action: { label: 'Send us a Message', href: '/contact' },
   },
 ];
 
@@ -97,9 +97,11 @@ export default function MembershipPage() {
                 fontWeight: 300, fontSize: '1.0625rem', lineHeight: 1.85,
                 color: 'var(--ink-mid)',
               }}>
-                We welcome professionals who are ready to bring their skills, their networks, and
-                their genuine care for others to a community of like-minded people. We are building
-                something real here in Northlands — and we want the right people in the garden.
+                We are shaped by two guiding philosophies: <strong style={{ fontWeight: 400 }}>Bustani</strong> —
+                a garden cultivated with care and intention — and <strong style={{ fontWeight: 400 }}>Ubuntu</strong> —
+                the African understanding that <em>I am because we are</em>. We welcome professionals
+                who are ready to bring their skills and genuine care to a community that grows
+                together, because none of us flourishes alone.
               </p>
             </div>
 
@@ -276,9 +278,9 @@ export default function MembershipPage() {
             The garden has room for you.
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href="mailto:info@northlandsbustani.org" className="btn-gold">
+            <Link href="/contact" className="btn-gold">
               Apply for Membership
-            </a>
+            </Link>
             <Link href="/contact" className="btn-outline-blue">
               Contact Us
             </Link>
