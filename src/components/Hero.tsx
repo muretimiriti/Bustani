@@ -130,8 +130,8 @@ export default function Hero() {
         animate={{ y: [0, 8, 0] }}
         transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
       >
-        <a href="#about-rotary" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <a href="#about-rotary" aria-label="Scroll to content" style={{ color: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
             <path d="M6 9l6 6 6-6" />
           </svg>
         </a>

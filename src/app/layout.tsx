@@ -41,8 +41,25 @@ export default function RootLayout({
       className={`${playfair.variable} ${jost.variable} h-full`}
     >
       <body className="min-h-full flex flex-col antialiased" suppressHydrationWarning>
+        <a
+          href="#main-content"
+          style={{
+            position: 'absolute', top: '-100%', left: '1rem', zIndex: 200,
+            padding: '0.75rem 1.5rem',
+            background: 'var(--blue-mid)', color: '#ffffff',
+            fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+            fontSize: '0.875rem', letterSpacing: '0.1em', textDecoration: 'none',
+            transition: 'top 0.2s',
+          }}
+          onFocus={(e) => { e.currentTarget.style.top = '1rem'; }}
+          onBlur={(e) => { e.currentTarget.style.top = '-100%'; }}
+        >
+          Skip to main content
+        </a>
         <Navbar />
-        {children}
+        <div id="main-content" tabIndex={-1} style={{ outline: 'none' }}>
+          {children}
+        </div>
         <Footer />
       </body>
     </html>
