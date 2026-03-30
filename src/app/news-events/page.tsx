@@ -3,8 +3,13 @@ import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 
 export const metadata: Metadata = {
-  title: 'News & Events — Rotary Club of Northlands Bustani',
-  description: 'Stay up to date with meetings, events, and news from the Rotary Club of Northlands Bustani.',
+  title: 'News & Events',
+  description: 'Stay up to date with weekly meetings, fellowship events, and service updates from the Rotary Club of Northlands Bustani. We meet every Thursday at 7:00 PM, Bedarin Hotel, Bypass, Nairobi.',
+  openGraph: {
+    title: 'News & Events | Rotary Club of Northlands Bustani',
+    description: 'Weekly meetings every Thursday at 7:00 PM, Bedarin Hotel, Bypass — plus club events and service updates.',
+    type: 'website',
+  },
 };
 
 const upcomingEvents = [

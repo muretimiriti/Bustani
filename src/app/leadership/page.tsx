@@ -2,8 +2,13 @@ import type { Metadata } from 'next';
 import PageHero from '@/components/PageHero';
 
 export const metadata: Metadata = {
-  title: 'Leadership — Rotary Club of Northlands Bustani',
-  description: 'Meet the board and officers of the Rotary Club of Northlands Bustani, District 9212, Kenya.',
+  title: 'Leadership',
+  description: 'The board, officers, and committee structure of the Rotary Club of Northlands Bustani, District 9212, Kenya. Officers confirmed following the inaugural elections after our 23 March 2026 charter.',
+  openGraph: {
+    title: 'Leadership | Rotary Club of Northlands Bustani',
+    description: 'Board, officers, and committees of RC Northlands Bustani — District 9212, Kenya. Chartered 23 March 2026.',
+    type: 'website',
+  },
 };
 
 const board = [

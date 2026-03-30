@@ -3,8 +3,13 @@ import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 
 export const metadata: Metadata = {
-  title: 'Our Projects — Rotary Club of Northlands Bustani',
-  description: 'The service projects and community initiatives of the Rotary Club of Northlands Bustani, District 9212, Kenya.',
+  title: 'Our Projects',
+  description: 'Service projects and community initiatives by the Rotary Club of Northlands Bustani. From the Gachororo Medical Camp (600+ served) to YoungLife Africa partnerships — real impact in Nairobi and beyond.',
+  openGraph: {
+    title: 'Our Projects | Rotary Club of Northlands Bustani',
+    description: 'From the Gachororo Medical Camp (600+ served) to YoungLife Africa partnerships — real impact in Nairobi and beyond.',
+    type: 'website',
+  },
 };
 
 const completedProjects = [
