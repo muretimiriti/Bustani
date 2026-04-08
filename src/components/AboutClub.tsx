@@ -3,9 +3,15 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer, staggerFast, viewportConfig } from '@/lib/variants';
+import FadeSlideshow from './FadeSlideshow';
+import mem1 from '@/app/images/DSC_5729.jpg';
+import mem2 from '@/app/images/DSC_5735.jpg';
+import mem3 from '@/app/images/DSC_5737.jpg';
+
+const memberPhotos = [mem1, mem2, mem3];
 
 const stats = [
-  { label: 'Active Members', value: '35' },
+  { label: 'Charter Members', value: '56' },
   { label: 'Chartered', value: 'March 2026' },
   { label: 'District', value: '9212' },
   { label: 'Country', value: 'Kenya' },
@@ -44,7 +50,7 @@ export default function AboutClub() {
             color: 'var(--ink-mid)', marginBottom: '3rem',
           }}>
             We began as a satellite club under the Rotary Club of Juja in July 2025, growing rapidly
-            into a community of 35 dedicated professionals. In September 2025 we adopted the name
+            into a community of 56 dedicated professionals. In September 2025 we adopted the name
             "Bustani" and set our sights on full charter — achieving it on 23 March 2026. From our
             first meeting to our first medical camp serving over 600 people, we have been
             cultivating a garden of change — one project, one partnership, one member at a time.
@@ -133,6 +139,30 @@ export default function AboutClub() {
               }}>{s.value}</p>
             </motion.div>
           ))}
+        </motion.div>
+
+        {/* Member photos */}
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          style={{ position: 'relative', height: '420px', overflow: 'hidden', marginTop: '3rem', borderRadius: '2px' }}
+        >
+          <FadeSlideshow images={memberPhotos} interval={4500} sizes="100vw" />
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 1,
+            background: 'linear-gradient(to top, rgba(0,31,63,0.55) 0%, transparent 100%)',
+            padding: '1.5rem 2rem 1.25rem',
+          }}>
+            <p style={{
+              fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+              fontWeight: 300, fontSize: '0.75rem', letterSpacing: '0.2em',
+              textTransform: 'uppercase', color: 'rgba(255,255,255,0.75)', margin: 0,
+            }}>
+              Our Members — Northlands Bustani
+            </p>
+          </div>
         </motion.div>
 
         {/* CTAs */}

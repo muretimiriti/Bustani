@@ -3,7 +3,12 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { heroContainer, heroItem } from '@/lib/variants';
-import heroImg from '@/app/images/pexels-kpaukshtite-2317921.jpg';
+import FadeSlideshow from './FadeSlideshow';
+import slide1 from '@/app/images/pexels-andrea-harmatne-juszku-2151089039-31652822.jpg';
+import slide2 from '@/app/images/pexels-carsten-busch-904667880-27965195.jpg';
+import slide3 from '@/app/images/pexels-todd-trapani-488382-5022309.jpg';
+
+const heroSlides = [slide1, slide2, slide3];
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -23,18 +28,17 @@ export default function Hero() {
         overflow: 'hidden',
       }}
     >
-      {/* Parallax background */}
+      {/* Parallax background slideshow */}
       <motion.div
         style={{
           position: 'absolute',
           inset: '-10%',
-          backgroundImage: `url(${heroImg.src})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
           y: bgY,
           zIndex: 0,
         }}
-      />
+      >
+        <FadeSlideshow images={heroSlides} interval={5000} sizes="100vw" />
+      </motion.div>
 
       {/* Overlay */}
       <div style={{

@@ -22,9 +22,9 @@ export default function GalleryImages({ images }: GalleryImagesProps) {
         marginBottom: '4rem',
       }}
     >
-      {images.map((img) => (
+      {images.map((img, i) => (
         <motion.div
-          key={img.caption}
+          key={i}
           variants={fadeUp}
           whileHover="hover"
           initial="rest"

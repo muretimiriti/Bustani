@@ -2,8 +2,41 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import PageHero from '@/components/PageHero';
 import GalleryImages from '@/components/GalleryImages';
-import flower1 from '@/app/images/pexels-kpaukshtite-2317921.jpg';
-import flower2 from '@/app/images/pexels-mark-k-2159010989-35870239.jpg';
+
+import img01 from '@/app/images/DSC_5546.jpg';
+import img02 from '@/app/images/DSC_5563.jpg';
+import img03 from '@/app/images/DSC_5577.jpg';
+import img04 from '@/app/images/DSC_5581.jpg';
+import img05 from '@/app/images/DSC_5615.jpg';
+import img06 from '@/app/images/DSC_5630 (1).jpg';
+import img07 from '@/app/images/DSC_5630.jpg';
+import img08 from '@/app/images/DSC_5633.jpg';
+import img09 from '@/app/images/DSC_5689.jpg';
+import img10 from '@/app/images/DSC_5693.jpg';
+import img11 from '@/app/images/DSC_5729.jpg';
+import img12 from '@/app/images/DSC_5735.jpg';
+import img13 from '@/app/images/DSC_5737.jpg';
+import img14 from '@/app/images/DSC_5770.jpg';
+import img15 from '@/app/images/DSC_5820.jpg';
+import img16 from '@/app/images/DSC_5906.jpg';
+import img17 from '@/app/images/DSC_5908.jpg';
+import img18 from '@/app/images/DSC_5948.jpg';
+import img19 from '@/app/images/DSC_6026.jpg';
+import img20 from '@/app/images/DSC_6030.jpg';
+import img21 from '@/app/images/DSC_6049.jpg';
+import img22 from '@/app/images/DSC_6068.jpg';
+import img23 from '@/app/images/DSC_6220.jpg';
+import img24 from '@/app/images/IMG_0102.jpg';
+import img25 from '@/app/images/IMG_0105.jpg';
+import img26 from '@/app/images/IMG_0221.jpg';
+import img27 from '@/app/images/IMG_9434.jpg';
+import img28 from '@/app/images/IMG_9438.jpg';
+import img29 from '@/app/images/IMG_9451.jpg';
+import img30 from '@/app/images/IMG_9460.jpg';
+import img31 from '@/app/images/IMG_9513.jpg';
+import img32 from '@/app/images/IMG_9566.jpg';
+import img33 from '@/app/images/IMG_9721.jpg';
+import img34 from '@/app/images/IMG_9946.jpg';
 
 export const metadata: Metadata = {
   title: 'Gallery',
@@ -15,6 +48,43 @@ export const metadata: Metadata = {
   },
 };
 
+const galleryImages = [
+  { src: img01, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img02, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img03, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img04, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img05, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img06, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img07, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img08, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img09, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img10, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img11, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img12, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img13, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img14, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img15, alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },
+  { src: img16, alt: 'Service project — YoungLife Africa', caption: 'YoungLife Africa Visit' },
+  { src: img17, alt: 'Service project — YoungLife Africa', caption: 'YoungLife Africa Visit' },
+  { src: img18, alt: 'Service project — YoungLife Africa', caption: 'YoungLife Africa Visit' },
+  { src: img19, alt: 'Service project — YoungLife Africa', caption: 'YoungLife Africa Visit' },
+  { src: img20, alt: 'Service project — YoungLife Africa', caption: 'YoungLife Africa Visit' },
+  { src: img21, alt: 'Service project — YoungLife Africa', caption: 'YoungLife Africa Visit' },
+  { src: img22, alt: 'Northlands Bustani fellowship', caption: 'Fellowship' },
+  { src: img23, alt: 'Northlands Bustani fellowship', caption: 'Fellowship' },
+  { src: img24, alt: 'Being CEO with Phil Karanja', caption: 'Being CEO — Phil Karanja' },
+  { src: img25, alt: 'Being CEO with Phil Karanja', caption: 'Being CEO — Phil Karanja' },
+  { src: img26, alt: 'Being CEO with Phil Karanja', caption: 'Being CEO — Phil Karanja' },
+  { src: img27, alt: 'Northlands Bustani fellowship', caption: 'Fellowship' },
+  { src: img28, alt: 'Being CEO with Phil Karanja', caption: 'Being CEO — Phil Karanja' },
+  { src: img29, alt: 'Being CEO with Phil Karanja', caption: 'Being CEO — Phil Karanja' },
+  { src: img30, alt: 'Northlands Bustani fellowship', caption: 'Fellowship' },
+  { src: img31, alt: 'Northlands Bustani fellowship', caption: 'Fellowship' },
+  { src: img32, alt: 'YoungLife Africa — Early Christmas Visit', caption: 'YoungLife Africa Visit' },
+  { src: img33, alt: 'Northlands Bustani fellowship', caption: 'Fellowship' },
+  { src: img34, alt: 'Being CEO with Phil Karanja', caption: 'Being CEO — Phil Karanja' },
+];
+
 export default function GalleryPage() {
   return (
     <main style={{ paddingTop: '142px' }}>
@@ -24,76 +94,15 @@ export default function GalleryPage() {
         subtitle="Glimpses of fellowship, service, and the moments that make our club what it is."
       />
 
-      {/* Charter & Feature section */}
       <section className="section-pad" style={{ background: 'var(--bg-white)' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
-          <span className="eyebrow">Charter Milestones</span>
+          <span className="eyebrow">Club Moments</span>
           <span className="gold-rule" />
           <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', marginBottom: '3rem', maxWidth: '560px' }}>
             The Garden in Bloom
           </h2>
 
-          <GalleryImages
-            images={[
-              { src: flower1, alt: 'Northlands Bustani — vibrant blooms representing growth and service', caption: 'Northlands in Bloom' },
-              { src: flower2, alt: 'Northlands Bustani — golden blooms symbolising fellowship and growth', caption: 'Bustani — A Garden of Service' },
-            ]}
-          />
-        </div>
-      </section>
-
-      {/* Fellowships placeholder grid */}
-      <section className="section-pad" style={{ background: 'var(--bg-off-white)' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
-          <span className="eyebrow">Fellowships</span>
-          <span className="gold-rule" />
-          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', marginBottom: '1.5rem', maxWidth: '480px' }}>
-            Our Story is Just Beginning
-          </h2>
-          <p style={{
-            fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
-            fontWeight: 300, fontSize: '1.0625rem', lineHeight: 1.85,
-            color: 'var(--ink-mid)', maxWidth: '620px', marginBottom: '3rem',
-          }}>
-            As a club chartered in March 2026, our photo archive is young and growing.
-            Every meeting, every project, every fellowship evening adds a new chapter.
-            Check back regularly as our gallery fills with the faces and moments that define us.
-          </p>
-
-          {/* Placeholder grid */}
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-            gap: '1rem',
-          }}>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                style={{
-                  aspectRatio: '1',
-                  background: i % 3 === 0 ? 'var(--blue-ghost)' : i % 3 === 1 ? 'var(--bg-sand)' : 'var(--bg-sand-light)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.5rem',
-                }}
-              >
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                  <rect x="4" y="7" width="24" height="18" rx="2" stroke="var(--ink-rule)" strokeWidth="1.5" />
-                  <circle cx="21" cy="13" r="2.5" stroke="var(--ink-rule)" strokeWidth="1.5" />
-                  <path d="M4 21l6-5 5 4 4-3 9 7" stroke="var(--ink-rule)" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-                <span style={{
-                  fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
-                  fontWeight: 300, fontSize: '0.7rem', letterSpacing: '0.12em',
-                  textTransform: 'uppercase', color: 'var(--ink-rule)',
-                }}>
-                  Coming Soon
-                </span>
-              </div>
-            ))}
-          </div>
+          <GalleryImages images={galleryImages} />
         </div>
       </section>
 

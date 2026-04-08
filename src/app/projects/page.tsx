@@ -1,6 +1,26 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { type StaticImageData } from 'next/image';
 import PageHero from '@/components/PageHero';
+import FadeSlideshow from '@/components/FadeSlideshow';
+import heroBg from '@/app/images/IMG_9946.jpg';
+
+// YoungLife images
+import yl1 from '@/app/images/IMG_9438.jpg';
+import yl2 from '@/app/images/IMG_0102.jpg';
+import yl3 from '@/app/images/IMG_0105.jpg';
+import yl4 from '@/app/images/IMG_0221.jpg';
+import yl5 from '@/app/images/IMG_9451.jpg';
+import yl6 from '@/app/images/IMG_9946.jpg';
+import yl7 from '@/app/images/IMG_9566.jpg';
+
+// Being CEO images
+import ceo1 from '@/app/images/DSC_6030.jpg';
+import ceo2 from '@/app/images/DSC_5906.jpg';
+import ceo3 from '@/app/images/DSC_5908.jpg';
+import ceo4 from '@/app/images/DSC_5948.jpg';
+import ceo5 from '@/app/images/DSC_6026.jpg';
+import ceo6 from '@/app/images/DSC_6049.jpg';
 
 export const metadata: Metadata = {
   title: 'Our Projects',
@@ -12,7 +32,10 @@ export const metadata: Metadata = {
   },
 };
 
-const completedProjects = [
+const youngLifeImages: StaticImageData[] = [yl1, yl2, yl3, yl4, yl5, yl6, yl7];
+const ceoImages: StaticImageData[] = [ceo1, ceo2, ceo3, ceo4, ceo5, ceo6];
+
+const completedProjects: { avenue: string; title: string; description: string; status: string; highlight: string; images?: StaticImageData[] }[] = [
   {
     avenue: 'Community Service',
     title: 'Gachororo Community Medical Camp',
@@ -28,6 +51,16 @@ const completedProjects = [
       'On 21 December 2025, seven Rotary and Rotaract clubs joined forces for a day of fellowship with YoungLife Africa — featuring cooking, communal meals, games, mentorship sessions, and the construction of vertical gardens. The clubs collectively raised KES 53,500 in cash and significant in-kind support for over 100 attendees.',
     status: 'Completed',
     highlight: '100+ Attendees',
+    images: youngLifeImages,
+  },
+  {
+    avenue: 'Fellowship',
+    title: 'Being CEO with Phil Karanja',
+    description:
+      'An intimate fellowship session with Phil Karanja exploring the mindset, responsibilities, and everyday realities of leading at the top. Members engaged in candid dialogue on executive decision-making, resilience, and servant leadership — drawing practical lessons from Phil\'s journey to and through the CEO seat.',
+    status: 'Completed',
+    highlight: 'Leadership Fellowship',
+    images: ceoImages,
   },
 ];
 
@@ -69,6 +102,7 @@ export default function ProjectsPage() {
         eyebrow="Service in Action"
         title="Our Projects"
         subtitle="Every great garden begins with intention. Here are the seeds we are planting across our community."
+        backgroundImage={heroBg}
       />
 
       {/* Intro */}
@@ -122,10 +156,17 @@ export default function ProjectsPage() {
                 key={project.title}
                 style={{
                   background: '#ffffff',
-                  padding: '2rem',
                   borderTop: '3px solid var(--gold-bright)',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
               >
+                {project.images && project.images.length > 0 && (
+                  <div style={{ position: 'relative', height: '220px', overflow: 'hidden', flexShrink: 0 }}>
+                    <FadeSlideshow images={project.images} />
+                  </div>
+                )}
+                <div style={{ padding: '2rem', flex: 1 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                   <span style={{
                     fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
@@ -164,6 +205,7 @@ export default function ProjectsPage() {
                 }}>
                   {project.description}
                 </p>
+                </div>
               </div>
             ))}
           </div>

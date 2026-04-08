@@ -19,13 +19,13 @@ const timeline = [
   {
     date: 'December 2025',
     title: 'Service Begins',
-    body: 'With 35 active members, the club launches its first major service projects: the Gachororo Community Medical Camp (600+ people served) and the YoungLife Africa Early Christmas Visit. The club demonstrates it is ready to charter.',
+    body: 'With 56 active members, the club launches its first major service projects: the Gachororo Community Medical Camp (600+ people served) and the YoungLife Africa Early Christmas Visit. The club demonstrates it is ready to charter.',
     isCharter: false,
   },
   {
     date: '23 March 2026',
     title: 'Charter Day',
-    body: 'The Rotary Club of Northlands Bustani is officially chartered by Rotary International, sponsored by the Rotary Club of Juja. A historic milestone for our 35 members, our families, and every community we will serve.',
+    body: 'The Rotary Club of Northlands Bustani is officially chartered by Rotary International, sponsored by the Rotary Club of Juja. A historic milestone for our 56 members, our families, and every community we will serve.',
     isCharter: true,
   },
 ];

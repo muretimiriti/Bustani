@@ -1,5 +1,6 @@
 'use client';
 
+import Image, { type StaticImageData } from 'next/image';
 import { motion } from 'framer-motion';
 import { heroContainer, heroItem } from '@/lib/variants';
 
@@ -7,9 +8,10 @@ interface PageHeroProps {
   eyebrow: string;
   title: string;
   subtitle?: string;
+  backgroundImage?: StaticImageData;
 }
 
-export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
+export default function PageHero({ eyebrow, title, subtitle, backgroundImage }: PageHeroProps) {
   return (
     <section style={{
       background: 'var(--blue-mid)',
@@ -18,6 +20,22 @@ export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
       position: 'relative',
       overflow: 'hidden',
     }}>
+      {backgroundImage && (
+        <>
+          <Image
+            src={backgroundImage}
+            alt=""
+            fill
+            sizes="100vw"
+            style={{ objectFit: 'cover', zIndex: 0 }}
+            priority
+          />
+          <div style={{
+            position: 'absolute', inset: 0, zIndex: 1,
+            background: 'linear-gradient(160deg, rgba(0,31,63,0.82) 0%, rgba(0,31,63,0.62) 100%)',
+          }} />
+        </>
+      )}
       {/* Decorative rings */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
@@ -26,7 +44,7 @@ export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
         style={{
           position: 'absolute', right: '-6rem', bottom: '-4rem',
           width: '28rem', height: '28rem', borderRadius: '50%',
-          border: '1px solid rgba(255,255,255,0.08)', pointerEvents: 'none',
+          border: '1px solid rgba(255,255,255,0.08)', pointerEvents: 'none', zIndex: 2,
         }}
       />
       <motion.div
@@ -36,7 +54,7 @@ export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
         style={{
           position: 'absolute', right: '-3rem', bottom: '-2rem',
           width: '18rem', height: '18rem', borderRadius: '50%',
-          border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none',
+          border: '1px solid rgba(255,255,255,0.05)', pointerEvents: 'none', zIndex: 2,
         }}
       />
 
@@ -44,7 +62,7 @@ export default function PageHero({ eyebrow, title, subtitle }: PageHeroProps) {
         variants={heroContainer}
         initial="hidden"
         animate="visible"
-        style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem', position: 'relative', zIndex: 1 }}
+        style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem', position: 'relative', zIndex: 3 }}
       >
         <motion.span variants={heroItem} style={{
           fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
