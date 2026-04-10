@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/REPLACE_WITH_YOUR_FORM_ID';
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xlgoybpg';
 
 const inputStyle: React.CSSProperties = {
   fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
@@ -20,12 +20,16 @@ const labelStyle: React.CSSProperties = {
 };
 
 export default function ContactForm() {
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '', newsletter: false });
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const target = e.target as HTMLInputElement;
+    setForm((prev) => ({
+      ...prev,
+      [target.name]: target.type === 'checkbox' ? target.checked : target.value,
+    }));
   }
 
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
@@ -35,7 +39,10 @@ export default function ContactForm() {
       const res = await fetch(FORMSPREE_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          newsletter: form.newsletter ? 'Yes — add to mailing list' : 'No',
+        }),
       });
       if (res.ok) { setSubmitted(true); } else { setError(true); }
     } catch { setError(true); }
@@ -46,6 +53,7 @@ export default function ContactForm() {
       <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem' }}>Message Received</h3>
       <p style={{ fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif", fontWeight: 300, fontSize: '0.9375rem', color: 'var(--ink-mid)', margin: 0 }}>
         Thank you for reaching out. A member of our team will respond shortly.
+        {form.newsletter && ' We\'ll also add you to our mailing list.'}
       </p>
     </div>
   );
@@ -89,6 +97,7 @@ export default function ContactForm() {
           <option value="membership">Membership Enquiry</option>
           <option value="project">Project / Partnership Proposal</option>
           <option value="visit">Visiting a Meeting</option>
+          <option value="event">Event / Charter Celebration</option>
           <option value="media">Media / Press</option>
           <option value="other">Other</option>
         </select>
@@ -100,6 +109,27 @@ export default function ContactForm() {
           onFocus={(e) => { e.currentTarget.style.borderColor = 'var(--blue-mid)'; }}
           onBlur={(e) => { e.currentTarget.style.borderColor = 'var(--ink-rule)'; }} />
       </div>
+
+      {/* Newsletter opt-in */}
+      <label style={{
+        display: 'flex', alignItems: 'flex-start', gap: '0.75rem', cursor: 'pointer',
+        padding: '1rem', background: 'var(--bg-off-white)', border: '1px solid var(--ink-rule)',
+      }}>
+        <input
+          type="checkbox"
+          name="newsletter"
+          checked={form.newsletter}
+          onChange={handleChange}
+          style={{ marginTop: '0.15rem', accentColor: 'var(--blue-mid)', width: '1rem', height: '1rem', flexShrink: 0 }}
+        />
+        <span style={{
+          fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+          fontWeight: 300, fontSize: '0.875rem', color: 'var(--ink-mid)', lineHeight: 1.6,
+        }}>
+          Keep me updated — add me to the Rotary Club of Northlands Bustani mailing list for news, events, and fellowship updates.
+        </span>
+      </label>
+
       <button type="submit" className="btn-gold" style={{ alignSelf: 'flex-start' }}>Send Message</button>
     </form>
   );

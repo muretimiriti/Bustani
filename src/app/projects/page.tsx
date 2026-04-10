@@ -53,13 +53,6 @@ const completedProjects: { avenue: string; title: string; description: string; s
 
 const focusAreas = [
   {
-    avenue: 'Community Service',
-    title: 'Adopt-a-Village Initiative',
-    description:
-      'Anchoring our service in a defined community, with sustainable interventions across the seven Rotary Areas of Focus — health, water, education, environment, peace, economic development, and disease prevention.',
-    status: 'In Planning',
-  },
-  {
     avenue: 'Vocational Service',
     title: 'Professional Mentorship Programme',
     description:
@@ -116,8 +109,7 @@ export default function ProjectsPage() {
               fontWeight: 300, fontSize: '1.0625rem', lineHeight: 1.85,
               color: 'var(--ink-mid)',
             }}>
-              Now chartered, we are deepening our roots — with an Adopt-a-Village approach
-              anchored across the seven Rotary Areas of Focus.
+              Now chartered, we are deepening our roots — anchoring our service across the seven Rotary Areas of Focus.
             </p>
           </div>
         </div>

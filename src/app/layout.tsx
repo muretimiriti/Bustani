@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Jost } from "next/font/google";
 import Navbar from "@/components/Navbar";
+import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
@@ -20,7 +21,7 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.northlandsbustani.org"),
+  metadataBase: new URL("https://www.rcnbustani.co.ke"),
   title: {
     default: "Rotary Club of Northlands Bustani",
     template: "%s | Rotary Club of Northlands Bustani",
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     title: "Rotary Club of Northlands Bustani",
     description: "Service Above Self — District 9212, Kenya. Chartered 23 March 2026.",
     type: "website",
-    url: "https://www.northlandsbustani.org",
+    url: "https://www.rcnbustani.co.ke",
     siteName: "Rotary Club of Northlands Bustani",
     locale: "en_KE",
     images: [
@@ -67,7 +68,7 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
   alternates: {
-    canonical: "https://www.northlandsbustani.org",
+    canonical: "https://www.rcnbustani.co.ke",
   },
 };
 
@@ -91,8 +92,8 @@ export default function RootLayout({
               "@type": "Organization",
               name: "Rotary Club of Northlands Bustani",
               alternateName: "RC Northlands Bustani",
-              url: "https://www.northlandsbustani.org",
-              logo: "https://www.northlandsbustani.org/icon.png",
+              url: "https://www.rcnbustani.co.ke",
+              logo: "https://www.rcnbustani.co.ke/icon.png",
               foundingDate: "2026-03-23",
               description:
                 "A professional service organisation chartered 23 March 2026 in Northlands, Kenya. Member of Rotary International District 9212. Guided by the principles of Service Above Self, Bustani, and Ubuntu.",
@@ -105,7 +106,7 @@ export default function RootLayout({
                 "@type": "ContactPoint",
                 telephone: "+254794607020",
                 contactType: "general enquiries",
-                email: "info@northlandsbustani.org",
+                email: "info@rcnbustani.co.ke",
                 areaServed: "KE",
                 availableLanguage: "English",
               },
@@ -139,13 +140,15 @@ export default function RootLayout({
                 url: "https://www.rotary.org",
               },
               sameAs: [
-                "https://www.facebook.com/northlandsbustani",
-                "https://www.instagram.com/northlandsbustani",
+                "https://www.instagram.com/rotaryclubofnorthlandsbustani/",
+                "https://web.facebook.com/profile.php?id=61585717761431",
+                "https://www.tiktok.com/@rcnorthlandsbustani",
               ],
             }),
           }}
         />
         <Navbar />
+        <Breadcrumb />
         {children}
         <Footer />
       </body>

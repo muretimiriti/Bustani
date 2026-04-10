@@ -5,7 +5,7 @@ import ContactForm from './ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact Us',
-  description: 'Get in touch with the Rotary Club of Northlands Bustani. Visit us every Thursday at 7:00 PM at Bedarin Hotel, Bypass, Nairobi. Call 0794 607020 or email info@northlandsbustani.org.',
+  description: 'Get in touch with the Rotary Club of Northlands Bustani. Visit us every Thursday at 7:00 PM at Bedarin Hotel, Bypass, Nairobi. Call 0794 607020 or email info@rcnbustani.co.ke.',
   openGraph: {
     title: 'Contact — Rotary Club of Northlands Bustani',
     description: 'Visit us every Thursday at 7:00 PM, Bedarin Hotel, Bypass. Call 0794 607020.',
@@ -95,8 +95,10 @@ export default function ContactPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               {[
                 { label: 'Phone', icon: '✆', value: '0794 607020 / 0721 313219', href: 'tel:+254794607020' },
-                { label: 'Email', icon: '✉', value: 'info@northlandsbustani.org', href: 'mailto:info@northlandsbustani.org' },
-                { label: 'Social Media', icon: '◎', value: '@rotaryclubofnorthlandsbustani', href: undefined },
+                { label: 'Email', icon: '✉', value: 'info@rcnbustani.co.ke', href: 'mailto:info@rcnbustani.co.ke' },
+                { label: 'Instagram', icon: '◎', value: '@rotaryclubofnorthlandsbustani', href: 'https://www.instagram.com/rotaryclubofnorthlandsbustani/' },
+                { label: 'Facebook', icon: '◎', value: 'RC Northlands Bustani', href: 'https://web.facebook.com/profile.php?id=61585717761431' },
+                { label: 'TikTok', icon: '◎', value: '@rcnorthlandsbustani', href: 'https://www.tiktok.com/@rcnorthlandsbustani' },
                 { label: 'Rotary International', icon: '⬡', value: 'District 9212 — Kenya', href: undefined },
                 { label: 'Chartered by', icon: '★', value: 'Rotary Club of Juja', href: undefined },
               ].map((item) => (

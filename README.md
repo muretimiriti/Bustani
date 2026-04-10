@@ -104,13 +104,9 @@ All images live in `public/images/` and are referenced as string paths:
 
 Powered by [Formspree](https://formspree.io). To connect the form to `info@rcnbustani.co.ke`:
 
-1. Sign in at formspree.io and create a new form for `info@rcnbustani.co.ke`
-2. Copy the form ID (e.g. `xabcd123`)
-3. Update [src/app/contact/ContactForm.tsx](src/app/contact/ContactForm.tsx) line 5:
+Form is live and connected to `info@rcnbustani.co.ke` via endpoint `xlgoybpg`.
 
-```ts
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xabcd123';
-```
+To update the endpoint, edit [src/app/contact/ContactForm.tsx](src/app/contact/ContactForm.tsx) line 5.
 
 ---
 
