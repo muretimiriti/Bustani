@@ -1,0 +1,15 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/contact/page": "/contact",
+  "/gallery/page": "/gallery",
+  "/icon.png/route": "/icon.png",
+  "/leadership/page": "/leadership",
+  "/membership/page": "/membership",
+  "/news-events/page": "/news-events",
+  "/opengraph-image/route": "/opengraph-image",
+  "/page": "/",
+  "/projects/page": "/projects",
+  "/robots.txt/route": "/robots.txt",
+  "/sitemap.xml/route": "/sitemap.xml"
+}

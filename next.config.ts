@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: 'standalone',
   turbopack: {
     // Pin the workspace root to this project, not the parent home directory
     root: __dirname,
