@@ -4,11 +4,12 @@ import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { heroContainer, heroItem } from '@/lib/variants';
 import FadeSlideshow from './FadeSlideshow';
-import slide1 from '@/app/images/pexels-andrea-harmatne-juszku-2151089039-31652822.jpg';
-import slide2 from '@/app/images/pexels-carsten-busch-904667880-27965195.jpg';
-import slide3 from '@/app/images/pexels-todd-trapani-488382-5022309.jpg';
 
-const heroSlides = [slide1, slide2, slide3];
+const heroSlides = [
+  '/images/pexels-andrea-harmatne-juszku-2151089039-31652822.jpg',
+  '/images/pexels-carsten-busch-904667880-27965195.jpg',
+  '/images/pexels-todd-trapani-488382-5022309.jpg',
+];
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);

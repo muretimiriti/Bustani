@@ -2,10 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // Allow Next.js to optimise images imported from src/app/images/
-    localPatterns: [
-      { pathname: '/src/app/images/**' },
-    ],
+    // Serve AVIF first (50% smaller than WebP), then WebP, then original
+    formats: ['image/avif', 'image/webp'],
+    // Responsive breakpoints served to the browser
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 64, 96, 128, 256, 384],
+    // Aggressive caching — images rarely change
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
   },
 };
 

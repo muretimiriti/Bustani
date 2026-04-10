@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image, { type StaticImageData } from 'next/image';
+import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 
 /**
@@ -13,7 +13,7 @@ export default function FadeSlideshow({
   interval = 4000,
   sizes = '(max-width: 768px) 100vw, 50vw',
 }: {
-  images: StaticImageData[];
+  images: string[];
   interval?: number;
   sizes?: string;
 }) {

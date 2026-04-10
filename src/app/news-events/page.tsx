@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import PageHero from '@/components/PageHero';
 
 export const metadata: Metadata = {
@@ -19,13 +20,6 @@ const upcomingEvents = [
     title: 'Regular Club Meeting',
     description: 'Our weekly fellowship and business meeting at Bedarin Hotel, Bypass from 7:00 PM. Guests welcome — come and see what Rotary looks like from the inside.',
     type: 'Meeting',
-  },
-  {
-    date: '23 March',
-    month: 'Annual',
-    title: 'Charter Anniversary Celebration',
-    description: 'Marking the anniversary of our official charter — 23 March 2026. A celebration of the members, the community, and the year of service ahead.',
-    type: 'Celebration',
   },
   {
     date: 'Quarterly',
@@ -142,8 +136,124 @@ export default function NewsEventsPage() {
         </div>
       </section>
 
-      {/* Upcoming events */}
+      {/* Charter Party — Featured Upcoming Event */}
       <section className="section-pad" style={{ background: 'var(--bg-white)' }}>
+        <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
+          <span className="eyebrow">Upcoming Event</span>
+          <span className="gold-rule" />
+          <h2 style={{ fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)', marginBottom: '2.5rem', maxWidth: '600px' }}>
+            Charter Celebration — 11 April 2026
+          </h2>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '3rem',
+            alignItems: 'start',
+          }}>
+            {/* Flyer */}
+            <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
+              <Image
+                src="/charter-party-2026.jpeg"
+                alt="Charter Celebration flyer — 11 April 2026, Abai Lodges & Spa"
+                fill
+                style={{ objectFit: 'cover' }}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+
+            {/* Details */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div>
+                <p style={{
+                  fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                  fontWeight: 300, fontSize: '0.7rem', letterSpacing: '0.18em',
+                  textTransform: 'uppercase', color: 'var(--ink-muted)', margin: '0 0 0.4rem',
+                }}>Event</p>
+                <p style={{
+                  fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",
+                  fontWeight: 700, fontSize: '1.25rem', color: 'var(--blue-mid)', margin: 0, lineHeight: 1.35,
+                }}>
+                  Installation of Charter President Pat Ngumu and 1st Board of Directors 2025–2026
+                </p>
+              </div>
+
+              {[
+                { label: 'Date & Time', value: '11 April 2026 · 2:00 PM' },
+                { label: 'Venue', value: 'Abai Lodges & Spa, Kagio (Off Sagana–Kutus Road)' },
+                { label: 'Theme', value: 'Zulu' },
+              ].map((item) => (
+                <div key={item.label}>
+                  <p style={{
+                    fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                    fontWeight: 300, fontSize: '0.7rem', letterSpacing: '0.15em',
+                    textTransform: 'uppercase', color: 'var(--ink-muted)', margin: '0 0 0.25rem',
+                  }}>{item.label}</p>
+                  <p style={{
+                    fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                    fontWeight: 400, fontSize: '0.9375rem', color: 'var(--ink)', margin: 0,
+                  }}>{item.value}</p>
+                </div>
+              ))}
+
+              {/* Charges */}
+              <div>
+                <p style={{
+                  fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                  fontWeight: 300, fontSize: '0.7rem', letterSpacing: '0.15em',
+                  textTransform: 'uppercase', color: 'var(--ink-muted)', margin: '0 0 0.75rem',
+                }}>Charges</p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  {[
+                    { category: 'Rotarians', amount: 'KES 3,500' },
+                    { category: 'Rotaractors', amount: 'KES 2,500' },
+                    { category: 'Guests', amount: 'KES 3,500' },
+                  ].map((row) => (
+                    <div key={row.category} style={{
+                      display: 'flex', justifyContent: 'space-between',
+                      borderBottom: '1px solid var(--ink-rule)', paddingBottom: '0.4rem',
+                    }}>
+                      <span style={{
+                        fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                        fontWeight: 300, fontSize: '0.9375rem', color: 'var(--ink-mid)',
+                      }}>{row.category}</span>
+                      <span style={{
+                        fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                        fontWeight: 600, fontSize: '0.9375rem', color: 'var(--ink)',
+                      }}>{row.amount}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Payment */}
+              <div style={{
+                background: 'var(--blue-ghost)',
+                borderLeft: '3px solid var(--gold-bright)',
+                padding: '1rem 1.25rem',
+              }}>
+                <p style={{
+                  fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                  fontWeight: 300, fontSize: '0.7rem', letterSpacing: '0.15em',
+                  textTransform: 'uppercase', color: 'var(--ink-muted)', margin: '0 0 0.25rem',
+                }}>Till Number (M-Pesa)</p>
+                <p style={{
+                  fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",
+                  fontWeight: 700, fontSize: '1.5rem', color: 'var(--blue-mid)', margin: 0,
+                  letterSpacing: '0.05em',
+                }}>6912636</p>
+              </div>
+
+              <Link href="/contact" className="btn-gold" style={{ alignSelf: 'flex-start' }}>
+                RSVP Now
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming events */}
+      <section className="section-pad" style={{ background: 'var(--bg-off-white)' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
           <span className="eyebrow">Calendar</span>
           <span className="gold-rule" />
@@ -161,7 +271,7 @@ export default function NewsEventsPage() {
                   gap: '2rem',
                   alignItems: 'start',
                   padding: '1.75rem',
-                  background: 'var(--bg-off-white)',
+                  background: 'var(--bg-white)',
                   borderLeft: `3px solid ${typeColors[event.type] || 'var(--blue-mid)'}`,
                 }}
               >

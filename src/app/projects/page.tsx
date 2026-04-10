@@ -1,26 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { type StaticImageData } from 'next/image';
 import PageHero from '@/components/PageHero';
 import FadeSlideshow from '@/components/FadeSlideshow';
-import heroBg from '@/app/images/IMG_9946.jpg';
-
-// YoungLife images
-import yl1 from '@/app/images/IMG_9438.jpg';
-import yl2 from '@/app/images/IMG_0102.jpg';
-import yl3 from '@/app/images/IMG_0105.jpg';
-import yl4 from '@/app/images/IMG_0221.jpg';
-import yl5 from '@/app/images/IMG_9451.jpg';
-import yl6 from '@/app/images/IMG_9946.jpg';
-import yl7 from '@/app/images/IMG_9566.jpg';
-
-// Being CEO images
-import ceo1 from '@/app/images/DSC_6030.jpg';
-import ceo2 from '@/app/images/DSC_5906.jpg';
-import ceo3 from '@/app/images/DSC_5908.jpg';
-import ceo4 from '@/app/images/DSC_5948.jpg';
-import ceo5 from '@/app/images/DSC_6026.jpg';
-import ceo6 from '@/app/images/DSC_6049.jpg';
 
 export const metadata: Metadata = {
   title: 'Our Projects',
@@ -32,10 +13,16 @@ export const metadata: Metadata = {
   },
 };
 
-const youngLifeImages: StaticImageData[] = [yl1, yl2, yl3, yl4, yl5, yl6, yl7];
-const ceoImages: StaticImageData[] = [ceo1, ceo2, ceo3, ceo4, ceo5, ceo6];
+const youngLifeImages = [
+  '/images/IMG_9438.jpg', '/images/IMG_0102.jpg', '/images/IMG_0105.jpg',
+  '/images/IMG_0221.jpg', '/images/IMG_9451.jpg', '/images/IMG_9946.jpg', '/images/IMG_9566.jpg',
+];
+const ceoImages = [
+  '/images/DSC_6030.jpg', '/images/DSC_5906.jpg', '/images/DSC_5908.jpg',
+  '/images/DSC_5948.jpg', '/images/DSC_6026.jpg', '/images/DSC_6049.jpg',
+];
 
-const completedProjects: { avenue: string; title: string; description: string; status: string; highlight: string; images?: StaticImageData[] }[] = [
+const completedProjects: { avenue: string; title: string; description: string; status: string; highlight: string; images?: string[] }[] = [
   {
     avenue: 'Community Service',
     title: 'Gachororo Community Medical Camp',
@@ -102,7 +89,7 @@ export default function ProjectsPage() {
         eyebrow="Service in Action"
         title="Our Projects"
         subtitle="Every great garden begins with intention. Here are the seeds we are planting across our community."
-        backgroundImage={heroBg}
+        backgroundImage="/images/IMG_9946.jpg"
       />
 
       {/* Intro */}

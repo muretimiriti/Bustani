@@ -1,6 +1,6 @@
 'use client';
 
-import Image, { type StaticImageData } from 'next/image';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { heroContainer, heroItem } from '@/lib/variants';
 
@@ -8,7 +8,7 @@ interface PageHeroProps {
   eyebrow: string;
   title: string;
   subtitle?: string;
-  backgroundImage?: StaticImageData;
+  backgroundImage?: string;
 }
 
 export default function PageHero({ eyebrow, title, subtitle, backgroundImage }: PageHeroProps) {

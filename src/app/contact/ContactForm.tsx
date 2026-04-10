@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/FORMSPREE_ID';
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/REPLACE_WITH_YOUR_FORM_ID';
 
 const inputStyle: React.CSSProperties = {
   fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
@@ -55,7 +55,7 @@ export default function ContactForm() {
       <h3 style={{ fontSize: '1.125rem', color: '#c0392b', marginBottom: '0.5rem' }}>Message Not Sent</h3>
       <p style={{ fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif", fontWeight: 300, fontSize: '0.9375rem', color: 'var(--ink-mid)', margin: '0 0 1rem' }}>
         Something went wrong. Please email us directly at{' '}
-        <a href="mailto:info@northlandsbustani.org" style={{ color: 'var(--blue-mid)' }}>info@northlandsbustani.org</a>.
+        <a href="mailto:info@rcnbustani.co.ke" style={{ color: 'var(--blue-mid)' }}>info@rcnbustani.co.ke</a>.
       </p>
       <button onClick={() => setError(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--blue-mid)', padding: 0, fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif", fontSize: '0.875rem' }}>
         Try again &rarr;

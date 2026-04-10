@@ -2,17 +2,17 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import PageHero from '@/components/PageHero';
 
-import imgPresident     from '@/app/images/DSC_5546.jpg';
-import imgPresidentElect from '@/app/images/DSC_5630 (1).jpg';
-import imgPresidentNom  from '@/app/images/DSC_5581.jpg';
-import imgTreasurer     from '@/app/images/DSC_5689.jpg';
-import imgSecretary     from '@/app/images/DSC_5693.jpg';
-import imgSAA           from '@/app/images/WhatsApp Image 2026-04-07 at 16.23.30 (1).jpeg';
-import imgPR            from '@/app/images/WhatsApp Image 2026-04-07 at 16.23.30.jpeg';
-import imgNewGen        from '@/app/images/DSC_5820.jpg';
-import imgGovernance    from '@/app/images/WhatsApp Image 2026-04-07 at 16.26.45.jpeg';
-import imgFoundation    from '@/app/images/DSC_5633.jpg';
-import imgFundraising   from '@/app/images/WhatsApp Image 2026-04-07 at 16.23.30 (2).jpeg';
+const imgPresident      = '/images/DSC_5546.jpg';
+const imgPresidentElect = '/images/DSC_5630 (1).jpg';
+const imgPresidentNom   = '/images/DSC_5581.jpg';
+const imgTreasurer      = '/images/DSC_5689.jpg';
+const imgSecretary      = '/images/DSC_5693.jpg';
+const imgSAA            = '/images/WhatsApp Image 2026-04-07 at 16.23.30 (1).jpeg';
+const imgPR             = '/images/WhatsApp Image 2026-04-07 at 16.23.30.jpeg';
+const imgNewGen         = '/images/DSC_5820.jpg';
+const imgGovernance     = '/images/WhatsApp Image 2026-04-07 at 16.26.45.jpeg';
+const imgFoundation     = '/images/DSC_5633.jpg';
+const imgFundraising    = '/images/WhatsApp Image 2026-04-07 at 16.23.30 (2).jpeg';
 
 export const metadata: Metadata = {
   title: 'Leadership',

@@ -4,11 +4,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer, staggerFast, viewportConfig } from '@/lib/variants';
 import FadeSlideshow from './FadeSlideshow';
-import mem1 from '@/app/images/DSC_5729.jpg';
-import mem2 from '@/app/images/DSC_5735.jpg';
-import mem3 from '@/app/images/DSC_5737.jpg';
 
-const memberPhotos = [mem1, mem2, mem3];
+const memberPhotos = ['/images/DSC_5729.jpg', '/images/DSC_5735.jpg', '/images/DSC_5737.jpg'];
 
 const stats = [
   { label: 'Charter Members', value: '56' },

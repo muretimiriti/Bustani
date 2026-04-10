@@ -1,74 +1,53 @@
 'use client';
 
-import Image, { StaticImageData } from 'next/image';
-import { motion } from 'framer-motion';
-import { staggerContainer, fadeUp, viewportConfig } from '@/lib/variants';
+import Image from 'next/image';
 
 interface GalleryImagesProps {
-  images: { src: StaticImageData; alt: string; caption: string }[];
+  images: { src: string; alt: string; caption: string }[];
 }
 
 export default function GalleryImages({ images }: GalleryImagesProps) {
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="visible"
-      viewport={viewportConfig}
-      style={{
+    <>
+      <style>{`
+        .gallery-item { position:relative; aspect-ratio:4/3; overflow:hidden; cursor:pointer; }
+        .gallery-item img { transition: transform 0.5s cubic-bezier(0.22,1,0.36,1); }
+        .gallery-item:hover img { transform: scale(1.06); }
+        .gallery-caption { position:absolute; bottom:0; left:0; right:0;
+          background:linear-gradient(to top,rgba(13,44,94,0.85) 0%,transparent 100%);
+          padding:1.5rem; opacity:0.7; transition:opacity 0.3s ease; }
+        .gallery-item:hover .gallery-caption { opacity:1; }
+        .gallery-caption p { transform:translateY(4px); transition:transform 0.3s ease; }
+        .gallery-item:hover .gallery-caption p { transform:translateY(0); }
+      `}</style>
+      <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
         gap: '1.5rem',
         marginBottom: '4rem',
-      }}
-    >
-      {images.map((img, i) => (
-        <motion.div
-          key={i}
-          variants={fadeUp}
-          whileHover="hover"
-          initial="rest"
-          animate="rest"
-          style={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', cursor: 'pointer' }}
-        >
-          <motion.div
-            variants={{
-              rest: { scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-              hover: { scale: 1.06, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
-            }}
-            style={{ position: 'absolute', inset: 0 }}
-          >
-            <Image src={img.src} alt={img.alt} fill sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw" style={{ objectFit: 'cover' }} />
-          </motion.div>
-
-          {/* Caption overlay fades in on hover */}
-          <motion.div
-            variants={{
-              rest: { opacity: 0.7 },
-              hover: { opacity: 1 },
-            }}
-            style={{
-              position: 'absolute', bottom: 0, left: 0, right: 0,
-              background: 'linear-gradient(to top, rgba(13,44,94,0.85) 0%, transparent 100%)',
-              padding: '1.5rem',
-            }}
-          >
-            <motion.p
-              variants={{
-                rest: { y: 4, opacity: 0.8 },
-                hover: { y: 0, opacity: 1, transition: { duration: 0.3 } },
-              }}
-              style={{
+      }}>
+        {images.map((img, i) => (
+          <div key={i} className="gallery-item">
+            <Image
+              src={img.src}
+              alt={img.alt}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+              style={{ objectFit: 'cover' }}
+              loading={i < 6 ? 'eager' : 'lazy'}
+            />
+            <div className="gallery-caption">
+              <p style={{
                 fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",
                 fontWeight: 700, fontStyle: 'italic', fontSize: '1rem',
                 color: '#ffffff', margin: 0,
-              }}
-            >
-              {img.caption}
-            </motion.p>
-          </motion.div>
-        </motion.div>
-      ))}
-    </motion.div>
+              }}>
+                {img.caption}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
