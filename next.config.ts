@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    // Pin the workspace root to this project, not the parent home directory
+    root: __dirname,
+  },
   images: {
     // Serve AVIF first (50% smaller than WebP), then WebP, then original
     formats: ['image/avif', 'image/webp'],
