@@ -1,11 +1,4 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-
-export const metadata: Metadata = {
-  title: 'Page Not Found',
-  description: 'This page does not exist on the Rotary Club of Northlands Bustani website.',
-  robots: { index: false, follow: false },
-};
+import { Link } from 'react-router-dom';
 
 export default function NotFound() {
   return (

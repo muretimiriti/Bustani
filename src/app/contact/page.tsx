@@ -1,16 +1,6 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import PageHero from '@/components/PageHero';
 import ContactForm from './ContactForm';
-
-export const metadata: Metadata = {
-  title: 'Contact Us',
-  description: 'Get in touch with the Rotary Club of Northlands Bustani. Visit us every Thursday at 7:00 PM at Bedarin Hotel, Bypass, Nairobi. Call 0794 607020 or email info@rcnbustani.co.ke.',
-  openGraph: {
-    title: 'Contact — Rotary Club of Northlands Bustani',
-    description: 'Visit us every Thursday at 7:00 PM, Bedarin Hotel, Bypass. Call 0794 607020.',
-  },
-};
 
 export default function ContactPage() {
   return (

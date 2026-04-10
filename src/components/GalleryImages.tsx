@@ -1,6 +1,4 @@
-'use client';
 
-import Image from 'next/image';
 
 interface GalleryImagesProps {
   images: { src: string; alt: string; caption: string }[];
@@ -28,12 +26,10 @@ export default function GalleryImages({ images }: GalleryImagesProps) {
       }}>
         {images.map((img, i) => (
           <div key={i} className="gallery-item">
-            <Image
+            <img
               src={img.src}
               alt={img.alt}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-              style={{ objectFit: 'cover' }}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               loading={i < 6 ? 'eager' : 'lazy'}
             />
             <div className="gallery-caption">

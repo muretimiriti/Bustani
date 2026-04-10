@@ -1,5 +1,3 @@
-import type { Metadata } from 'next';
-import Image from 'next/image';
 import PageHero from '@/components/PageHero';
 
 const imgPresident      = '/images/DSC_5546.jpg';
@@ -13,16 +11,6 @@ const imgNewGen         = '/images/DSC_5820.jpg';
 const imgGovernance     = '/images/WhatsApp Image 2026-04-07 at 16.26.45.jpeg';
 const imgFoundation     = '/images/DSC_5633.jpg';
 const imgFundraising    = '/images/WhatsApp Image 2026-04-07 at 16.23.30 (2).jpeg';
-
-export const metadata: Metadata = {
-  title: 'Leadership',
-  description: 'The board, officers, and committee structure of the Rotary Club of Northlands Bustani, District 9212, Kenya. Officers confirmed following the inaugural elections after our 23 March 2026 charter.',
-  openGraph: {
-    title: 'Leadership | Rotary Club of Northlands Bustani',
-    description: 'Board, officers, and committees of RC Northlands Bustani — District 9212, Kenya. Chartered 23 March 2026.',
-    type: 'website',
-  },
-};
 
 const board = [
   { role: 'Charter President', name: 'Rtn Patrick Ngumo', image: imgPresident, accent: 'var(--gold-bright)' },
@@ -74,13 +62,10 @@ export default function LeadershipPage() {
               >
                 {/* Photo */}
                 <div style={{ position: 'relative', height: '260px', flexShrink: 0 }}>
-                  <Image
+                  <img
                     src={member.image}
                     alt={member.name !== 'To be confirmed' ? member.name : member.role}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    style={{ objectFit: 'cover', objectPosition: 'top' }}
-                    priority={board.indexOf(member) < 4}
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top' }}
                   />
                 </div>
 

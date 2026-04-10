@@ -1,6 +1,5 @@
-'use client';
 
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { fadeUp, staggerContainer, staggerFast, viewportConfig } from '@/lib/variants';
 import FadeSlideshow from './FadeSlideshow';
@@ -146,7 +145,7 @@ export default function AboutClub() {
           viewport={viewportConfig}
           style={{ position: 'relative', height: '420px', overflow: 'hidden', marginTop: '3rem', borderRadius: '2px' }}
         >
-          <FadeSlideshow images={memberPhotos} interval={4500} sizes="100vw" />
+          <FadeSlideshow images={memberPhotos} interval={4500} />
           <div style={{
             position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 1,
             background: 'linear-gradient(to top, rgba(0,31,63,0.55) 0%, transparent 100%)',

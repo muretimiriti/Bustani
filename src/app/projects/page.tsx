@@ -1,17 +1,6 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import PageHero from '@/components/PageHero';
 import FadeSlideshow from '@/components/FadeSlideshow';
-
-export const metadata: Metadata = {
-  title: 'Our Projects',
-  description: 'Service projects and community initiatives by the Rotary Club of Northlands Bustani. From the Gachororo Medical Camp (600+ served) to YoungLife Africa partnerships — real impact in Nairobi and beyond.',
-  openGraph: {
-    title: 'Our Projects | Rotary Club of Northlands Bustani',
-    description: 'From the Gachororo Medical Camp (600+ served) to YoungLife Africa partnerships — real impact in Nairobi and beyond.',
-    type: 'website',
-  },
-};
 
 const youngLifeImages = [
   '/images/IMG_9438.jpg', '/images/IMG_0102.jpg', '/images/IMG_0105.jpg',

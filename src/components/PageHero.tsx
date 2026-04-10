@@ -1,6 +1,4 @@
-'use client';
 
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { heroContainer, heroItem } from '@/lib/variants';
 
@@ -22,13 +20,10 @@ export default function PageHero({ eyebrow, title, subtitle, backgroundImage }: 
     }}>
       {backgroundImage && (
         <>
-          <Image
+          <img
             src={backgroundImage}
             alt=""
-            fill
-            sizes="100vw"
-            style={{ objectFit: 'cover', zIndex: 0 }}
-            priority
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 0 }}
           />
           <div style={{
             position: 'absolute', inset: 0, zIndex: 1,

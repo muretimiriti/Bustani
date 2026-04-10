@@ -1,11 +1,9 @@
-'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import logo from '@/app/images/Rotary Logo_EN21.png';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 
 const navLinks = [
   { label: 'About', href: '/#about-rotary', isPage: false },
@@ -43,7 +41,7 @@ const drawerItemVariants: Variants = {
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   const drawerRef = useRef<HTMLDivElement>(null);
 
   const isHome = pathname === '/';
@@ -100,11 +98,9 @@ export default function Navbar() {
         {/* Logo */}
         <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
           <motion.div whileHover={{ scale: 1.04 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
-            <Image
+            <img
               src={logo}
               alt="Rotary Club of Northlands Bustani"
-              height={140}
-              priority
               style={{
                 height: '140px', width: 'auto',
                 filter: opaque ? 'none' : 'brightness(0) invert(1)',

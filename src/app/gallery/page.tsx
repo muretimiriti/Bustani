@@ -1,17 +1,6 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import PageHero from '@/components/PageHero';
 import GalleryImages from '@/components/GalleryImages';
-
-export const metadata: Metadata = {
-  title: 'Gallery',
-  description: 'Photos from weekly meetings, fellowship events, and service projects of the Rotary Club of Northlands Bustani, District 9212. A growing visual archive of community, service, and Ubuntu in action.',
-  openGraph: {
-    title: 'Gallery | Rotary Club of Northlands Bustani',
-    description: 'A growing visual archive of fellowship, community service, and Ubuntu in action — District 9212, Kenya.',
-    type: 'website',
-  },
-};
 
 const galleryImages = [
   { src: '/images/DSC_5546.jpg', alt: 'Northlands Bustani club members', caption: 'Northlands Bustani' },

@@ -1,16 +1,5 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import PageHero from '@/components/PageHero';
-
-export const metadata: Metadata = {
-  title: 'Membership',
-  description: 'Join the Rotary Club of Northlands Bustani, District 9212. Connect with principled professionals, serve your community, and grow through the Ubuntu philosophy — I am because we are. Apply today.',
-  openGraph: {
-    title: 'Membership | Rotary Club of Northlands Bustani',
-    description: 'Connect with principled professionals, serve your community, and grow through Ubuntu. Apply to join RC Northlands Bustani.',
-    type: 'website',
-  },
-};
 
 const benefits = [
   { title: 'Fellowship', body: 'A network of principled professionals who become lifelong colleagues and friends.' },

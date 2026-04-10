@@ -1,6 +1,5 @@
-'use client';
 
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { staggerContainer, heroItem, viewportConfig } from '@/lib/variants';
 

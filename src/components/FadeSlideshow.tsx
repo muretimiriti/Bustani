@@ -1,7 +1,5 @@
-'use client';
 
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { AnimatePresence, motion } from 'framer-motion';
 
 /**
@@ -11,11 +9,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 export default function FadeSlideshow({
   images,
   interval = 4000,
-  sizes = '(max-width: 768px) 100vw, 50vw',
 }: {
   images: string[];
   interval?: number;
-  sizes?: string;
 }) {
   const [idx, setIdx] = useState(0);
 
@@ -36,13 +32,10 @@ export default function FadeSlideshow({
           transition={{ duration: 1.2, ease: 'easeInOut' }}
           style={{ position: 'absolute', inset: 0 }}
         >
-          <Image
+          <img
             src={images[idx]}
             alt=""
-            fill
-            sizes={sizes}
-            style={{ objectFit: 'cover' }}
-            priority={idx === 0}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </motion.div>
       </AnimatePresence>

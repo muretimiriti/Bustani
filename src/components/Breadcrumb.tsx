@@ -1,7 +1,5 @@
-'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, useLocation } from 'react-router-dom';
 
 const labels: Record<string, string> = {
   projects: 'Our Projects',
@@ -13,7 +11,7 @@ const labels: Record<string, string> = {
 };
 
 export default function Breadcrumb() {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   if (pathname === '/') return null;
 
   const segments = pathname.split('/').filter(Boolean);

@@ -1,4 +1,3 @@
-'use client';
 
 import { motion } from 'framer-motion';
 import { fadeUp, slideInLeft, staggerContainer, viewportConfig } from '@/lib/variants';

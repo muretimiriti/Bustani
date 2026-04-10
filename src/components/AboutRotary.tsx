@@ -1,6 +1,4 @@
-'use client';
 
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { fadeUp, slideInLeft, slideInRight, staggerContainer, viewportConfig } from '@/lib/variants';
 import wheelImg from '@/app/images/rotary wheel.png';
@@ -104,12 +102,10 @@ export default function AboutRotary() {
               position: 'absolute', inset: '-3rem', borderRadius: '50%',
               border: '1px solid var(--bg-sand)',
             }} />
-            <Image
+            <img
               src={wheelImg}
               alt="Rotary Wheel — Mark of Excellence"
-              fill
-              sizes="(max-width: 768px) 100vw, 340px"
-              style={{ objectFit: 'contain', padding: '1rem' }}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', padding: '1rem' }}
             />
           </motion.div>
         </motion.div>

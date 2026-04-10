@@ -1,17 +1,5 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
+import { Link } from 'react-router-dom';
 import PageHero from '@/components/PageHero';
-
-export const metadata: Metadata = {
-  title: 'News & Events',
-  description: 'Stay up to date with weekly meetings, fellowship events, and service updates from the Rotary Club of Northlands Bustani. We meet every Thursday at 7:00 PM, Bedarin Hotel, Bypass, Nairobi.',
-  openGraph: {
-    title: 'News & Events | Rotary Club of Northlands Bustani',
-    description: 'Weekly meetings every Thursday at 7:00 PM, Bedarin Hotel, Bypass — plus club events and service updates.',
-    type: 'website',
-  },
-};
 
 const upcomingEvents = [
   {
@@ -153,12 +141,10 @@ export default function NewsEventsPage() {
           }}>
             {/* Flyer */}
             <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden' }}>
-              <Image
+              <img
                 src="/charter-party-2026.jpeg"
                 alt="Charter Celebration flyer — 11 April 2026, Abai Lodges & Spa"
-                fill
-                style={{ objectFit: 'cover' }}
-                sizes="(max-width: 768px) 100vw, 50vw"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
 

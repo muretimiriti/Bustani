@@ -2,6 +2,10 @@
    DESIGN TOKENS — Rotary Club of Northlands Bustani
    ───────────────────────────────────────────── */
 :root {
+  /* Fonts */
+  --font-playfair: 'Playfair Display';
+  --font-jost: 'Jost';
+
   /* Rotary Blue Scale */
   --blue-dark:  #0d2c5e;
   --blue-mid:   #17458f;

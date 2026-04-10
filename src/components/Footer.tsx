@@ -1,7 +1,5 @@
-'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
 import logo from '@/app/images/Rotary Logo_EN21.png';
 
 const quickLinks = [
@@ -30,10 +28,9 @@ export default function Footer() {
       >
         {/* Brand */}
         <div>
-          <Image
+          <img
             src={logo}
             alt="Rotary Club of Northlands Bustani"
-            height={40}
             style={{ height: '40px', width: 'auto', filter: 'brightness(0) invert(1)', marginBottom: '1.5rem', display: 'block' }}
           />
           <p style={{
