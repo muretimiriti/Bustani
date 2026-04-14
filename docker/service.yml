@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bustani-service
+  labels:
+    app: bustani
+spec:
+  type: LoadBalancer
+  selector:
+    app: bustani
+  ports:
+  - name: http
+    port: 80
+    targetPort: 3000
+    protocol: TCP
+  sessionAffinity: None

@@ -1,0 +1,8 @@
+node_modules
+.next
+out
+build
+.DS_Store
+npm-debug.log
+docker-compose.yml
+Dockerfile
