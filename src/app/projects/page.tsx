@@ -251,8 +251,8 @@ export default function ProjectsPage() {
             we want to hear from you.
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <Link href="/contact" className="btn-gold">Get in Touch</Link>
-            <Link href="/membership" className="btn-outline-white" style={{ color: 'var(--blue-mid)', borderColor: 'var(--blue-mid)' }}>
+            <Link to="/contact" className="btn-gold">Get in Touch</Link>
+            <Link to="/membership" className="btn-outline-white" style={{ color: 'var(--blue-mid)', borderColor: 'var(--blue-mid)' }}>
               Become a Member
             </Link>
           </div>

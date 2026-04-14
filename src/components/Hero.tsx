@@ -37,7 +37,7 @@ export default function Hero() {
           zIndex: 0,
         }}
       >
-        <FadeSlideshow images={heroSlides} interval={5000} sizes="100vw" />
+        <FadeSlideshow images={heroSlides} interval={5000} />
       </motion.div>
 
       {/* Overlay */}

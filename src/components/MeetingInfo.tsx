@@ -69,7 +69,7 @@ export default function MeetingInfo() {
         {/* CTA */}
         <motion.div variants={fadeUp}>
           <motion.div whileHover={{ x: 4 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
-            <Link href="/news-events" style={{
+            <Link to="/news-events" style={{
               fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
               fontWeight: 300, fontSize: '0.75rem', letterSpacing: '0.15em',
               textTransform: 'uppercase', color: 'var(--blue-mid)',

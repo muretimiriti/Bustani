@@ -63,7 +63,7 @@ export default function Footer() {
             {quickLinks.map((l) => (
               <li key={l.href} style={{ marginBottom: '0.625rem' }}>
                 {l.isPage ? (
-                  <Link href={l.href} style={{
+                  <Link to={l.href} style={{
                     fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
                     fontWeight: 300, fontSize: '0.9375rem',
                     color: 'rgba(255,255,255,0.65)', textDecoration: 'none',

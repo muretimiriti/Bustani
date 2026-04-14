@@ -169,10 +169,10 @@ export default function AboutClub() {
           viewport={viewportConfig}
           style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '2.5rem' }}
         >
-          <Link href="/membership" className="btn-gold">Become a Member</Link>
-          <Link href="/#charter-story" className="btn-outline-white" style={{ color: 'var(--blue-mid)', borderColor: 'var(--blue-mid)' }}>
+          <Link to="/membership" className="btn-gold">Become a Member</Link>
+          <a href="/#charter-story" className="btn-outline-white" style={{ color: 'var(--blue-mid)', borderColor: 'var(--blue-mid)' }}>
             Our Story
-          </Link>
+          </a>
         </motion.div>
       </div>
     </section>

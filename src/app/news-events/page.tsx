@@ -118,7 +118,7 @@ export default function NewsEventsPage() {
               </div>
             ))}
           </div>
-          <Link href="/contact" className="btn-gold" style={{ whiteSpace: 'nowrap' }}>
+          <Link to="/contact" className="btn-gold" style={{ whiteSpace: 'nowrap' }}>
             RSVP to Visit
           </Link>
         </div>
@@ -230,7 +230,7 @@ export default function NewsEventsPage() {
                 }}>6912636</p>
               </div>
 
-              <Link href="/contact" className="btn-gold" style={{ alignSelf: 'flex-start' }}>
+              <Link to="/contact" className="btn-gold" style={{ alignSelf: 'flex-start' }}>
                 RSVP Now
               </Link>
             </div>

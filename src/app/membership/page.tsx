@@ -200,7 +200,7 @@ export default function MembershipPage() {
                     color: 'var(--ink-mid)', margin: '0 0 1rem',
                   }}>{step.body}</p>
                   <Link
-                    href={step.action.href}
+                    to={step.action.href}
                     style={{
                       fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
                       fontWeight: 300, fontSize: '0.75rem', letterSpacing: '0.15em',
@@ -272,10 +272,10 @@ export default function MembershipPage() {
             The garden has room for you.
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <Link href="/contact" className="btn-gold">
+            <Link to="/contact" className="btn-gold">
               Apply for Membership
             </Link>
-            <Link href="/contact" className="btn-outline-blue">
+            <Link to="/contact" className="btn-outline-blue">
               Contact Us
             </Link>
           </div>

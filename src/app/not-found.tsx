@@ -28,8 +28,8 @@ export default function NotFound() {
           Return to the garden and find your way from there.
         </p>
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/" className="btn-gold">Back to Homepage</Link>
-          <Link href="/contact" className="btn-outline-white" style={{ color: 'var(--blue-mid)', borderColor: 'var(--blue-mid)' }}>
+          <Link to="/" className="btn-gold">Back to Homepage</Link>
+          <Link to="/contact" className="btn-outline-white" style={{ color: 'var(--blue-mid)', borderColor: 'var(--blue-mid)' }}>
             Contact Us
           </Link>
         </div>

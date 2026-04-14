@@ -92,7 +92,7 @@ export default function JoinSection() {
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
-              <Link href="/membership" className="btn-gold">
+              <Link to="/membership" className="btn-gold">
                 Apply for Membership
               </Link>
             </motion.div>
@@ -101,7 +101,7 @@ export default function JoinSection() {
               whileTap={{ scale: 0.97 }}
               transition={{ type: 'spring', stiffness: 400, damping: 20 }}
             >
-              <Link href="/contact" className="btn-outline-blue">
+              <Link to="/contact" className="btn-outline-blue">
                 Contact Us
               </Link>
             </motion.div>

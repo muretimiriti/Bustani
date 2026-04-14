@@ -37,7 +37,7 @@ export default function Breadcrumb() {
         fontSize: '0.75rem',
         letterSpacing: '0.08em',
       }}>
-        <Link href="/" style={{ color: 'var(--ink-muted)', textDecoration: 'none' }}>
+        <Link to="/" style={{ color: 'var(--ink-muted)', textDecoration: 'none' }}>
           Home
         </Link>
         {segments.map((seg, i) => {
@@ -50,7 +50,7 @@ export default function Breadcrumb() {
               {isLast ? (
                 <span style={{ color: 'var(--blue-mid)' }}>{label}</span>
               ) : (
-                <Link href={href} style={{ color: 'var(--ink-muted)', textDecoration: 'none' }}>{label}</Link>
+                <Link to={href} style={{ color: 'var(--ink-muted)', textDecoration: 'none' }}>{label}</Link>
               )}
             </span>
           );

@@ -128,7 +128,7 @@ export default function ContactPage() {
             </div>
 
             <div style={{ marginTop: '1.5rem' }}>
-              <Link href="/membership" className="btn-gold">Apply for Membership</Link>
+              <Link to="/membership" className="btn-gold">Apply for Membership</Link>
             </div>
           </div>
         </div>

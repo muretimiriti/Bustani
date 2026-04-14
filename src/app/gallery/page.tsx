@@ -73,7 +73,7 @@ export default function GalleryPage() {
           }}>
             Every member adds to the richness of our club. Join us, and help write the next chapter.
           </p>
-          <Link href="/membership" className="btn-gold">Become a Member</Link>
+          <Link to="/membership" className="btn-gold">Become a Member</Link>
         </div>
       </section>
     </main>

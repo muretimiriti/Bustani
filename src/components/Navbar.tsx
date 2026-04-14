@@ -96,7 +96,7 @@ export default function Navbar() {
         height: '142px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
         {/* Logo */}
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none', flexShrink: 0 }}>
           <motion.div whileHover={{ scale: 1.04 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
             <img
               src={logo}
@@ -125,7 +125,7 @@ export default function Navbar() {
             };
             return link.isPage ? (
               <motion.div key={link.href} whileHover={{ y: -1 }} transition={{ type: 'spring', stiffness: 500, damping: 20 }}>
-                <Link href={link.href} className={`nav-link ${opaque ? '' : 'nav-link-white'}`} style={linkStyle}>
+                <Link to={link.href} className={`nav-link ${opaque ? '' : 'nav-link-white'}`} style={linkStyle}>
                   {link.label}
                 </Link>
               </motion.div>
@@ -138,7 +138,7 @@ export default function Navbar() {
             );
           })}
           <motion.div whileHover={{ scale: 1.03, y: -1 }} whileTap={{ scale: 0.97 }} transition={{ type: 'spring', stiffness: 400, damping: 20 }}>
-            <Link href="/membership" className="btn-gold" style={{ padding: '0.625rem 1.5rem', fontSize: '0.75rem' }}>
+            <Link to="/membership" className="btn-gold" style={{ padding: '0.625rem 1.5rem', fontSize: '0.75rem' }}>
               Become a Member
             </Link>
           </motion.div>
@@ -197,7 +197,7 @@ export default function Navbar() {
               link.isPage ? (
                 <motion.div key={link.href} custom={i} variants={drawerItemVariants}>
                   <Link
-                    href={link.href}
+                    to={link.href}
                     style={{
                       fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
                       fontWeight: 300, fontSize: '0.875rem', letterSpacing: '0.12em',
@@ -223,7 +223,7 @@ export default function Navbar() {
               )
             )}
             <motion.div custom={navLinks.length + 1} variants={drawerItemVariants} style={{ marginTop: '0.5rem' }}>
-              <Link href="/membership" className="btn-gold" style={{ display: 'block', textAlign: 'center' }}>
+              <Link to="/membership" className="btn-gold" style={{ display: 'block', textAlign: 'center' }}>
                 Become a Member
               </Link>
             </motion.div>
