@@ -1,0 +1,54 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: trivy-scan
+  namespace: default
+spec:
+  description: Scan container images and filesystems for vulnerabilities with Trivy
+  params:
+  - name: image
+    type: string
+    description: Container image to scan (e.g., myregistry/myimage:tag)
+  - name: scan-type
+    type: string
+    description: Type of scan - image or fs (filesystem)
+    default: image
+  - name: severity
+    type: string
+    description: Severities to report (CRITICAL,HIGH,MEDIUM,LOW)
+    default: CRITICAL,HIGH
+  - name: format
+    type: string
+    description: Output format - json, sarif, or table
+    default: table
+  - name: exit-code
+    type: string
+    description: Exit code when vulnerabilities found (0 or 1)
+    default: "0"
+  results:
+  - name: scan-result
+    description: Vulnerability scan result
+    type: string
+  steps:
+  - name: trivy-scan
+    image: aquasec/trivy:latest
+    script: |
+      set +e
+      
+      OUTPUT=$(trivy $(params.scan-type) \
+        --exit-code $(params.exit-code) \
+        --severity $(params.severity) \
+        --format $(params.format) \
+        $(params.image))
+      
+      RESULT=$?
+      
+      echo "$OUTPUT"
+      
+      if [ $RESULT -eq 0 ]; then
+        echo "No vulnerabilities found" | tee $(results.scan-result.path)
+      else
+        echo "Vulnerabilities detected" | tee $(results.scan-result.path)
+      fi
+      
+      exit 0

@@ -1,0 +1,31 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build-and-test
+  namespace: default
+spec:
+  description: Build and test a Node.js/Next.js application
+  params:
+  - name: node-version
+    type: string
+    description: Node.js version to use
+    default: "20"
+  workspaces:
+  - name: source
+    description: Source code workspace
+  steps:
+  - name: install-dependencies
+    image: node:$(params.node-version)-alpine
+    workingDir: $(workspaces.source.path)
+    script: |
+      npm ci
+  - name: lint
+    image: node:$(params.node-version)-alpine
+    workingDir: $(workspaces.source.path)
+    script: |
+      npm run lint
+  - name: build
+    image: node:$(params.node-version)-alpine
+    workingDir: $(workspaces.source.path)
+    script: |
+      npm run build

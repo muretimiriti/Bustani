@@ -1,0 +1,49 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-push
+  namespace: default
+spec:
+  description: Push changes to a git repository
+  params:
+  - name: base-user-home
+    type: string
+    description: Absolute path of the user's home directory
+    default: /root
+  - name: user-name
+    type: string
+    description: Git user name
+  - name: user-email
+    type: string
+    description: Git user email
+  - name: git-server-secret-name
+    type: string
+    description: Secret name containing git credentials
+    default: git-credentials
+  - name: message
+    type: string
+    description: Commit message
+    default: "Updated by Tekton"
+  - name: force
+    type: string
+    description: Force push flag (true/false)
+    default: "false"
+  workspaces:
+  - name: source
+    description: The git repo workspace
+  steps:
+  - name: set-git-config
+    image: alpine/git:latest
+    workingDir: $(workspaces.source.path)
+    script: |
+      git config --global user.name "$(params.user-name)"
+      git config --global user.email "$(params.user-email)"
+  - name: push
+    image: alpine/git:latest
+    workingDir: $(workspaces.source.path)
+    script: |
+      if [ "$(params.force)" == "true" ]; then
+        git push -f
+      else
+        git push
+      fi

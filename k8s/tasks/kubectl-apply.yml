@@ -1,0 +1,46 @@
+apiVersion: tekton.dev/v1beta1
+kind: ClusterTask
+metadata:
+  name: kubectl-apply
+spec:
+  description: Apply Kubernetes manifests using kubectl
+  params:
+  - name: manifestsDir
+    type: string
+    description: Directory containing Kubernetes manifests
+    default: k8s/
+  - name: kubeconfig-secret-name
+    type: string
+    description: Secret name with kubeconfig
+    default: kubeconfig
+  - name: namespace
+    type: string
+    description: Target namespace
+    default: default
+  workspaces:
+  - name: source
+    description: Source workspace
+  steps:
+  - name: apply
+    image: bitnami/kubectl:latest
+    workingDir: $(workspaces.source.path)
+    env:
+    - name: KUBECONFIG
+      value: /root/.kube/config
+    command:
+    - sh
+    - -c
+    script: |
+      mkdir -p /root/.kube
+      cat /var/secrets/kubeconfig > /root/.kube/config
+      
+      kubectl apply -f $(params.manifestsDir) \
+        --namespace=$(params.namespace) \
+        -R
+    volumeMounts:
+    - name: kubeconfig
+      mountPath: /var/secrets
+  volumes:
+  - name: kubeconfig
+    secret:
+      secretName: $(params.kubeconfig-secret-name)

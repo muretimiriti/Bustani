@@ -1,0 +1,35 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: bustani-pipeline-run-001
+  namespace: default
+spec:
+  pipelineRef:
+    name: bustani-ci-cd-pipeline
+  serviceAccountName: tekton-sa
+  timeout: 30m
+  
+  params:
+  - name: git-repository
+    value: https://github.com/mureti/Bustani
+  - name: git-revision
+    value: main
+  - name: image-name
+    value: bustani/bustani
+  - name: image-tag
+    value: latest
+  - name: trivy-severity
+    value: CRITICAL,HIGH
+  - name: namespace
+    value: default
+  
+  workspaces:
+  - name: shared-workspace
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: standard
