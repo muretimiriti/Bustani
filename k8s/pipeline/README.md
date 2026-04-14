@@ -98,9 +98,10 @@ tkn pipelinerun describe bustani-pipeline-run-001 -n default
 
 1. **clone-repo** → Clone git repository
 2. **build-app** → Install deps, lint, build Node.js app
-3. **build-image** → Build and push Docker image with Kaniko
-4. **scan-image** → Security scan with Trivy
-5. **deploy-to-k8s** → Apply manifests to cluster
+3. **run-tests** → Execute npm tests (unit tests)
+4. **build-image** → Build and push Docker image with Kaniko
+5. **scan-image** → Security scan with Trivy
+6. **deploy-to-k8s** → Apply manifests to cluster
 
 ## Customize Parameters
 

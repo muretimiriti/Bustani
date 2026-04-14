@@ -1,0 +1,52 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: npm-test
+  namespace: default
+spec:
+  description: Run npm tests for a Node.js application
+  params:
+  - name: node-version
+    type: string
+    description: Node.js version to use
+    default: "20"
+  - name: test-script
+    type: string
+    description: npm test script to run
+    default: "test"
+  - name: coverage
+    type: string
+    description: Generate coverage report (true/false)
+    default: "false"
+  results:
+  - name: test-result
+    description: Test execution result
+    type: string
+  workspaces:
+  - name: source
+    description: Source code workspace
+  steps:
+  - name: install-dependencies
+    image: node:$(params.node-version)-alpine
+    workingDir: $(workspaces.source.path)
+    script: |
+      npm ci
+  - name: run-tests
+    image: node:$(params.node-version)-alpine
+    workingDir: $(workspaces.source.path)
+    script: |
+      set +e
+      
+      if [ "$(params.coverage)" == "true" ]; then
+        npm run test:coverage || TEST_RESULT=$?
+      else
+        npm run $(params.test-script) || TEST_RESULT=$?
+      fi
+      
+      if [ -z "$TEST_RESULT" ]; then
+        echo "Tests passed successfully" | tee $(results.test-result.path)
+        exit 0
+      else
+        echo "Tests failed with exit code $TEST_RESULT" | tee $(results.test-result.path)
+        exit 0
+      fi

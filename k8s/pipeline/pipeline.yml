@@ -63,9 +63,25 @@ spec:
     - name: source
       workspace: shared-workspace
   
-  # Task 3: Build and Push Image with Kaniko
-  - name: build-image
+  # Task 3: Run Tests
+  - name: run-tests
     runAfter: [build-app]
+    taskRef:
+      name: npm-test
+    params:
+    - name: node-version
+      value: "20"
+    - name: test-script
+      value: test
+    - name: coverage
+      value: "false"
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+  
+  # Task 4: Build and Push Image with Kaniko
+  - name: build-image
+    runAfter: [run-tests]
     taskRef:
       name: kaniko-build
     params:
@@ -83,7 +99,7 @@ spec:
     - name: source
       workspace: shared-workspace
   
-  # Task 4: Scan Image for Vulnerabilities
+  # Task 5: Scan Image for Vulnerabilities
   - name: scan-image
     runAfter: [build-image]
     taskRef:
@@ -100,7 +116,7 @@ spec:
     - name: exit-code
       value: "0"
   
-  # Task 5: Deploy to Kubernetes
+  # Task 6: Deploy to Kubernetes
   - name: deploy-to-k8s
     runAfter: [scan-image]
     taskRef:
