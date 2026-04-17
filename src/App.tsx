@@ -10,24 +10,38 @@ import MembershipPage from '@/app/membership/page';
 import NewsEventsPage from '@/app/news-events/page';
 import ProjectsPage from '@/app/projects/page';
 import NotFoundPage from '@/app/not-found';
+import Admin from '@/pages/Admin';
 import '@/app/globals.css';
 
 export default function App() {
   return (
     <>
-      <Navbar />
-      <Breadcrumb />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/leadership" element={<LeadershipPage />} />
-        <Route path="/membership" element={<MembershipPage />} />
-        <Route path="/news-events" element={<NewsEventsPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="*" element={<NotFoundPage />} />
+        {/* Admin routes - no navbar/breadcrumb/footer */}
+        <Route path="/admin" element={<Admin />} />
+
+        {/* Regular routes with navbar/breadcrumb/footer */}
+        <Route
+          path="*"
+          element={
+            <>
+              <Navbar />
+              <Breadcrumb />
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/gallery" element={<GalleryPage />} />
+                <Route path="/leadership" element={<LeadershipPage />} />
+                <Route path="/membership" element={<MembershipPage />} />
+                <Route path="/news-events" element={<NewsEventsPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+              <Footer />
+            </>
+          }
+        />
       </Routes>
-      <Footer />
     </>
   );
 }

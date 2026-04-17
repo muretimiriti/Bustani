@@ -1,7 +1,292 @@
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import PageHero from '@/components/PageHero';
 
-const upcomingEvents = [
+const API = import.meta.env.VITE_API_URL || '/api.php'
+
+interface EventItem {
+  id: string
+  title: string
+  date: string
+  location?: string
+  description?: string
+  image_url?: string
+  created_at: string
+}
+
+interface NewsItem {
+  id: string
+  title: string
+  body: string
+  image_url?: string
+  created_at: string
+}
+
+export default function NewsEventsPage() {
+  const [data, setData] = useState({ events: [], news: [] })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [tab, setTab] = useState<'events' | 'news'>('events')
+
+  const fetchData = () => {
+    setLoading(true)
+    setError(null)
+    
+    fetch(API)
+      .then((r) => {
+        if (!r.ok) throw new Error(`API error: ${r.status}`)
+        return r.json()
+      })
+      .then((d) => {
+        setData(d)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error('Failed to fetch:', err)
+        setError(err.message)
+        setLoading(false)
+      })
+  }
+
+  useEffect(() => {
+    fetchData()
+    const interval = setInterval(fetchData, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const items = data[tab] || []
+
+  return (
+    <main style={{ paddingTop: '142px' }}>
+      <PageHero
+        eyebrow="Stay Connected"
+        title="News & Events"
+        subtitle="Meetings, milestones, and moments of fellowship from the Rotary Club of Northlands Bustani."
+      />
+
+      {/* error message */}
+      {error && (
+        <section style={{ background: '#fee2e2', padding: '2rem 1.5rem' }}>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', color: '#991b1b' }}>
+            <p>⚠️ Error loading data: {error}</p>
+            <button
+              onClick={fetchData}
+              style={{
+                padding: '0.5rem 1rem',
+                background: '#991b1b',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Retry
+            </button>
+          </div>
+        </section>
+      )}
+
+      {/* loading state */}
+      {loading && !error && (
+        <section style={{ background: '#f6f7f9', padding: '3rem 1.5rem' }}>
+          <div style={{ maxWidth: '1280px', margin: '0 auto', textAlign: 'center' }}>
+            <p style={{ color: '#666' }}>Loading events and news...</p>
+          </div>
+        </section>
+      )}
+
+      {/* content */}
+      {!loading && !error && (
+        <>
+          {/* info section */}
+          <section style={{ background: 'var(--blue-ghost)', padding: '3rem 1.5rem' }}>
+            <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+              <p style={{
+                fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
+                fontWeight: 300, fontSize: '0.7rem', letterSpacing: '0.25em',
+                textTransform: 'uppercase', color: 'var(--blue-tint)', margin: '0 0 0.5rem',
+              }}>
+                Updates
+              </p>
+              <h2 style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)', color: 'var(--blue-mid)', margin: 0 }}>
+                {items.length} {tab === 'events' ? 'Upcoming Events' : 'News Articles'}
+              </h2>
+            </div>
+          </section>
+
+          {/* tabs */}
+          <section style={{ background: '#fff', borderBottom: '2px solid #eee', paddingTop: '2rem' }}>
+            <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem 1.5rem' }}>
+              <div style={{ display: 'flex', gap: '2rem', borderBottom: '1px solid #eee', marginBottom: '2rem' }}>
+                {(['events', 'news'] as const).map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: '0.5rem 0',
+                      fontSize: '1rem',
+                      fontWeight: tab === t ? 700 : 400,
+                      color: tab === t ? '#0A2463' : '#999',
+                      cursor: 'pointer',
+                      borderBottom: tab === t ? '2px solid #C8A84B' : 'none',
+                      marginBottom: '-1px',
+                    }}
+                  >
+                    {t === 'events' ? '📅 Events' : '📰 News'} ({items.length})
+                  </button>
+                ))}
+                <button
+                  onClick={fetchData}
+                  style={{
+                    marginLeft: 'auto',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '1.2rem',
+                    opacity: loading ? 0.5 : 1,
+                  }}
+                  title="Refresh data"
+                >
+                  🔄
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* empty state */}
+          {items.length === 0 && (
+            <section style={{ padding: '4rem 1.5rem', background: '#f9fafb' }}>
+              <div style={{ maxWidth: '1280px', margin: '0 auto', textAlign: 'center', color: '#999' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>
+                  {tab === 'events' ? '📅' : '📰'}
+                </div>
+                <p>No {tab} posted yet. Check back soon!</p>
+              </div>
+            </section>
+          )}
+
+          {/* items grid */}
+          {items.length > 0 && (
+            <section style={{ padding: '3rem 1.5rem', background: '#f9fafb' }}>
+              <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: '2rem',
+                }}>
+                  {items.map((item: EventItem | NewsItem) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        background: '#fff',
+                        borderRadius: '8px',
+                        overflow: 'hidden',
+                        boxShadow: '0 1px 3px rgba(0,0,0,.1)',
+                        display: 'flex',
+                        flexDirection: 'column' as const,
+                      }}
+                    >
+                      {/* image */}
+                      {item.image_url && (
+                        <img
+                          src={item.image_url}
+                          alt={item.title}
+                          style={{
+                            width: '100%',
+                            height: '200px',
+                            objectFit: 'cover' as const,
+                            display: 'block',
+                          }}
+                        />
+                      )}
+
+                      {/* content */}
+                      <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' as const }}>
+                        {tab === 'events' && (
+                          <>
+                            {(item as EventItem).date && (
+                              <div style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                marginBottom: '0.75rem',
+                              }}>
+                                <span style={{ fontSize: '0.85rem', color: '#0A2463', fontWeight: 700 }}>
+                                  📅 {new Date((item as EventItem).date + 'T00:00:00').toLocaleDateString('en-US', {
+                                    weekday: 'short',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                  })}
+                                </span>
+                              </div>
+                            )}
+                            {(item as EventItem).location && (
+                              <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                fontSize: '0.9rem',
+                                color: '#666',
+                                marginBottom: '0.75rem',
+                              }}>
+                                📍 {(item as EventItem).location}
+                              </div>
+                            )}
+                          </>
+                        )}
+
+                        {tab === 'news' && (
+                          <div style={{
+                            fontSize: '0.8rem',
+                            color: '#999',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            marginBottom: '0.75rem',
+                          }}>
+                            {new Date(item.created_at).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </div>
+                        )}
+
+                        <h3 style={{
+                          fontFamily: "'Playfair Display', Georgia, serif",
+                          fontSize: '1.25rem',
+                          fontWeight: 700,
+                          color: '#0A2463',
+                          margin: '0 0 0.75rem',
+                          lineHeight: 1.3,
+                        }}>
+                          {item.title}
+                        </h3>
+
+                        <p style={{
+                          fontSize: '0.95rem',
+                          lineHeight: 1.6,
+                          color: '#555',
+                          margin: 0,
+                          flex: 1,
+                        }}>
+                          {tab === 'events'
+                            ? (item as EventItem).description || 'No description'
+                            : (item as NewsItem).body || 'No content'}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+        </>
+      )}
+    </main>
+  )
+}
   {
     date: 'Every Thursday',
     month: 'Weekly',
