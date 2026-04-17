@@ -146,7 +146,7 @@ npm run dev
 
 ### Add an Event
 1. Go to `/admin`
-2. Enter password: `rotary2025`
+2. Enter password: `**********`
 3. Enter event details
 4. Click "Publish Event"
 5. ✅ Appears on `/events`

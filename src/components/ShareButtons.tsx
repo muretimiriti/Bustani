@@ -1,4 +1,7 @@
-import { motion } from 'framer-motion';
+const fbIcon = '/images/fb.png';
+const tiktokIcon = '/images/tiktok.png';
+const whatsappIcon = '/images/whatsapp.png';
+const igIcon = '/images/ig.jpeg';
 
 interface ShareButtonsProps {
   title: string;
@@ -20,15 +23,31 @@ export default function ShareButtons({ title, description, url = typeof window !
     },
     {
       name: 'Facebook',
-      icon: 'f',
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      icon: fbIcon,
+      isImage: true,
+      url: `https://web.facebook.com/profile.php?id=61585717761431`,
       color: '#1877F2',
     },
     {
       name: 'WhatsApp',
-      icon: '💬',
+      icon: whatsappIcon,
+      isImage: true,
       url: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
       color: '#25D366',
+    },
+    {
+      name: 'Instagram',
+      icon: igIcon,
+      isImage: true,
+      url: `https://www.instagram.com/rotaryclubofnorthlandsbustani/`,
+      color: '#E4405F',
+    },
+    {
+      name: 'TikTok',
+      icon: tiktokIcon,
+      isImage: true,
+      url: `https://www.tiktok.com/@rcnorthlandsbustani`,
+      color: '#000',
     },
     {
       name: 'LinkedIn',
@@ -77,13 +96,11 @@ export default function ShareButtons({ title, description, url = typeof window !
         Share:
       </span>
       {shareLinks.map((share) => (
-        <motion.a
+        <a
           key={share.name}
           href={share.url}
           target="_blank"
           rel="noopener noreferrer"
-          whileHover={{ scale: 1.15 }}
-          whileTap={{ scale: 0.95 }}
           title={`Share on ${share.name}`}
           style={{
             display: 'inline-flex',
@@ -98,17 +115,23 @@ export default function ShareButtons({ title, description, url = typeof window !
             fontWeight: 700,
             textDecoration: 'none',
             cursor: 'pointer',
-            transition: 'all 0.2s',
+            transition: 'transform 0.2s',
             fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
           }}
         >
-          {share.icon}
-        </motion.a>
+          {share.isImage ? (
+            <img
+              src={share.icon as string}
+              alt={share.name}
+              style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+            />
+          ) : (
+            share.icon
+          )}
+        </a>
       ))}
-      <motion.button
+      <button
         onClick={copyToClipboard}
-        whileHover={{ scale: 1.15 }}
-        whileTap={{ scale: 0.95 }}
         title="Copy link"
         style={{
           display: 'inline-flex',
@@ -123,12 +146,12 @@ export default function ShareButtons({ title, description, url = typeof window !
           fontWeight: 700,
           border: 'none',
           cursor: 'pointer',
-          transition: 'all 0.2s',
+          transition: 'transform 0.2s',
           fontFamily: "var(--font-jost), 'Jost', system-ui, sans-serif",
         }}
       >
         🔗
-      </motion.button>
+      </button>
     </div>
   );
 }

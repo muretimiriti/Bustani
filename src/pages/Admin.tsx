@@ -2,12 +2,23 @@
 import { useState, useEffect, useRef } from 'react'
 
 const API = import.meta.env.VITE_API_URL || '/api.php'
-const PASSWORD = 'rotary2025' // MUST match api.php
+const PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || ''
+
+interface DataItem {
+  id: string
+  title: string
+  date?: string
+  location?: string
+  created_at?: string
+  image_url?: string
+  images?: string[]
+  [key: string]: string | string[] | undefined
+}
 
 // ─── tiny API helpers ────────────────────────────────────────────────────────
 const fetchAll = () => fetch(API).then(r => r.json())
 
-const createItem = async (type: string, item: any, imageFiles: File[]) => {
+const createItem = async (type: string, item: Record<string, string>, imageFiles: File[]) => {
   if (imageFiles && imageFiles.length > 0) {
     const fd = new FormData()
     fd.append('password', PASSWORD)
@@ -53,6 +64,11 @@ export default function Admin() {
   const [totalImageSize, setTotalImageSize] = useState(0)
   const filesRef = useRef<HTMLInputElement>(null)
 
+  const showToast = (msg: string, ok = true) => {
+    setToast({ msg, ok })
+    setTimeout(() => setToast(null), 3000)
+  }
+
   // refresh list after login and tab switch
   useEffect(() => {
     if (authed) {
@@ -62,11 +78,6 @@ export default function Admin() {
       })
     }
   }, [authed, tab])
-
-  const showToast = (msg: string, ok = true) => {
-    setToast({ msg, ok })
-    setTimeout(() => setToast(null), 3000)
-  }
 
   const login = () => {
     if (pwInput === PASSWORD) {
@@ -390,7 +401,7 @@ export default function Admin() {
             {allData[tab].length === 0 ? (
               <div style={s.empty}>No {tab} yet. Create one on the left!</div>
             ) : (
-              allData[tab].map((item: any) => (
+              allData[tab].map((item: DataItem) => (
                 <div key={item.id} style={s.listItem}>
                   {(item.images && item.images[0]) || item.image_url ? (
                     <img src={(item.images && item.images[0]) || item.image_url} alt={item.title} style={s.listThumb} />
@@ -400,7 +411,7 @@ export default function Admin() {
                     <div style={s.listMeta}>
                       {tab === 'events'
                         ? [item.date, item.location].filter(Boolean).join(' · ')
-                        : new Date(item.created_at).toLocaleDateString('en-KE', {
+                        : new Date(item.created_at || '').toLocaleDateString('en-KE', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric',

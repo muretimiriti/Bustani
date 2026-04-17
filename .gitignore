@@ -38,4 +38,8 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# runtime data
+data.json
+/uploads/
 next-env.d.ts

@@ -1,5 +1,21 @@
 <?php
-header('Access-Control-Allow-Origin: *');
+// ── Security headers ─────────────────────────────────────────────────────────
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+header('Content-Security-Policy: default-src \'none\'');
+header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
+
+// ── CORS ─────────────────────────────────────────────────────────────────────
+$allowedOrigins = array_filter(array_map('trim', explode(',',
+    $_ENV['ALLOWED_ORIGINS'] ?? getenv('ALLOWED_ORIGINS') ?: 'http://localhost:5173,http://localhost:3000'
+)));
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+if (in_array($origin, $allowedOrigins, true)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else {
+    header('Access-Control-Allow-Origin: ' . $allowedOrigins[0]);
+}
 header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
@@ -7,9 +23,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { http_response_code(200); exit; }
 
 header('Content-Type: application/json');
 
+// ── Block direct access to data.json ─────────────────────────────────────────
+$requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+if (preg_match('/data\.json/i', $requestUri)) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Forbidden']);
+    exit;
+}
+
 define('DATA_FILE', __DIR__ . '/data.json');
 define('UPLOAD_DIR', __DIR__ . '/uploads/');
-define('ADMIN_PASSWORD', 'rotary2025'); // CHANGE THIS
+
+// Load password from environment variable or .env.local file
+$envFile = __DIR__ . '/.env.local';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (str_starts_with(trim($line), '#')) continue;
+        if (str_contains($line, '=')) {
+            [$key, $val] = explode('=', $line, 2);
+            $_ENV[trim($key)] = trim($val);
+        }
+    }
+}
+define('ADMIN_PASSWORD', $_ENV['ADMIN_PASSWORD'] ?? getenv('ADMIN_PASSWORD') ?: '');
 
 // Create uploads folder if missing
 if (!is_dir(UPLOAD_DIR)) mkdir(UPLOAD_DIR, 0755, true);
@@ -21,6 +58,14 @@ if (!file_exists(DATA_FILE)) {
 
 $method = $_SERVER['REQUEST_METHOD'];
 $data   = json_decode(file_get_contents(DATA_FILE), true);
+
+// ── Reject oversized request bodies (max 1 MB JSON, files handled separately) ─
+$rawInput = file_get_contents('php://input');
+if ($method !== 'GET' && strlen($rawInput) > 1024 * 1024) {
+    http_response_code(413);
+    echo json_encode(['error' => 'Request body too large']);
+    exit;
+}
 
 // ── GET: return all data ─────────────────────────────────────────────────────
 if ($method === 'GET') {
@@ -36,7 +81,7 @@ if ($method === 'POST') {
         $type     = $_POST['type']     ?? '';
         $item     = json_decode($_POST['item'] ?? '{}', true);
     } else {
-        $body     = json_decode(file_get_contents('php://input'), true);
+        $body     = json_decode($rawInput, true);
         $password = $body['password'] ?? '';
         $type     = $body['type']     ?? '';
         $item     = $body['item']     ?? [];
@@ -52,6 +97,19 @@ if ($method === 'POST') {
         http_response_code(400);
         echo json_encode(['error' => 'Invalid type']);
         exit;
+    }
+
+    // Sanitize text fields — strip tags to prevent stored XSS
+    $textFields = ['title', 'description', 'body', 'location', 'date'];
+    foreach ($textFields as $field) {
+        if (isset($item[$field]) && is_string($item[$field])) {
+            $item[$field] = strip_tags($item[$field]);
+            // Enforce max length per field (title: 200, others: 10000)
+            $maxLen = ($field === 'title') ? 200 : 10000;
+            if (strlen($item[$field]) > $maxLen) {
+                $item[$field] = substr($item[$field], 0, $maxLen);
+            }
+        }
     }
 
     // Handle multiple image uploads (5MB total limit per item)
@@ -82,7 +140,11 @@ if ($method === 'POST') {
             }
             
             $ext = pathinfo($_FILES['images']['name'][$i], PATHINFO_EXTENSION);
-            $filename = uniqid('img_', true) . '.' . strtolower($ext);
+            // Path traversal protection: only allow safe extensions
+            $allowedExt = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            $ext = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $ext));
+            if (!in_array($ext, $allowedExt)) $ext = 'jpg';
+            $filename = uniqid('img_', true) . '.' . $ext;
             move_uploaded_file($_FILES['images']['tmp_name'][$i], UPLOAD_DIR . $filename);
             
             $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
@@ -107,7 +169,7 @@ if ($method === 'POST') {
 
 // ── DELETE: remove item (and its image) ─────────────────────────────────────
 if ($method === 'DELETE') {
-    $body     = json_decode(file_get_contents('php://input'), true);
+    $body     = json_decode($rawInput, true);
     $password = $body['password'] ?? '';
     $type     = $body['type']     ?? '';
     $id       = $body['id']       ?? '';
@@ -118,21 +180,27 @@ if ($method === 'DELETE') {
         exit;
     }
 
+    if (!in_array($type, ['events', 'news'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Invalid type']);
+        exit;
+    }
+
     foreach ($data[$type] as $item) {
         if ($item['id'] === $id) {
             // Delete all images (new format)
             if (!empty($item['images']) && is_array($item['images'])) {
                 foreach ($item['images'] as $imageUrl) {
                     $filename = basename($imageUrl);
-                    $path = UPLOAD_DIR . $filename;
-                    if (file_exists($path)) unlink($path);
+                    $path = realpath(UPLOAD_DIR . $filename);
+                    if ($path && str_starts_with($path, realpath(UPLOAD_DIR)) && file_exists($path)) unlink($path);
                 }
             }
             // Backward compatibility: delete single image_url if present
             if (!empty($item['image_url'])) {
                 $filename = basename($item['image_url']);
-                $path = UPLOAD_DIR . $filename;
-                if (file_exists($path)) unlink($path);
+                $path = realpath(UPLOAD_DIR . $filename);
+                if ($path && str_starts_with($path, realpath(UPLOAD_DIR)) && file_exists($path)) unlink($path);
             }
         }
     }

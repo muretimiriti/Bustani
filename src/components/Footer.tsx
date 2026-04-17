@@ -31,7 +31,7 @@ export default function Footer() {
           <img
             src={logo}
             alt="Rotary Club of Northlands Bustani"
-            style={{ height: '40px', width: 'auto', filter: 'brightness(0) invert(1)', marginBottom: '1.5rem', display: 'block' }}
+            style={{ height: '80px', width: 'auto', filter: 'brightness(0) invert(1)', marginBottom: '1.5rem', display: 'block' }}
           />
           <p style={{
             fontFamily: "var(--font-playfair), 'Playfair Display', Georgia, serif",

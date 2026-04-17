@@ -1,0 +1,44 @@
+{
+  "@eslint/js": {
+    "current": "9.39.4",
+    "wanted": "9.39.4",
+    "latest": "10.0.1",
+    "dependent": "Bustani",
+    "location": "/home/mureti/Desktop/Bustani/node_modules/@eslint/js"
+  },
+  "@vitejs/plugin-react": {
+    "current": "4.7.0",
+    "wanted": "4.7.0",
+    "latest": "6.0.1",
+    "dependent": "Bustani",
+    "location": "/home/mureti/Desktop/Bustani/node_modules/@vitejs/plugin-react"
+  },
+  "eslint": {
+    "current": "9.39.4",
+    "wanted": "9.39.4",
+    "latest": "10.2.0",
+    "dependent": "Bustani",
+    "location": "/home/mureti/Desktop/Bustani/node_modules/eslint"
+  },
+  "react-router-dom": {
+    "current": "6.30.3",
+    "wanted": "6.30.3",
+    "latest": "7.14.1",
+    "dependent": "Bustani",
+    "location": "/home/mureti/Desktop/Bustani/node_modules/react-router-dom"
+  },
+  "typescript": {
+    "current": "5.9.3",
+    "wanted": "5.9.3",
+    "latest": "6.0.3",
+    "dependent": "Bustani",
+    "location": "/home/mureti/Desktop/Bustani/node_modules/typescript"
+  },
+  "vite": {
+    "current": "6.4.2",
+    "wanted": "6.4.2",
+    "latest": "8.0.8",
+    "dependent": "Bustani",
+    "location": "/home/mureti/Desktop/Bustani/node_modules/vite"
+  }
+}

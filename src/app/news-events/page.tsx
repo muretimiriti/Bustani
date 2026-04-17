@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
 import PageHero from '@/components/PageHero';
 import FadeSlideshow from '@/components/FadeSlideshow';
 import ShareButtons from '@/components/ShareButtons';
@@ -26,30 +25,20 @@ interface NewsItem {
   created_at: string;
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5 },
-  },
-};
-
 export default function NewsEventsPage() {
   const [data, setData] = useState({ events: [], news: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tab, setTab] = useState<'events' | 'news'>('events');
 
-  const fetchData = () => {
+  const [fetchTrigger, setFetchTrigger] = useState(0);
+
+  const fetchData = useCallback(() => {
+    setFetchTrigger((n) => n + 1);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     setError(null);
 
@@ -59,21 +48,19 @@ export default function NewsEventsPage() {
         return r.json();
       })
       .then((d) => {
-        setData(d);
-        setLoading(false);
+        if (!cancelled) { setData(d); setLoading(false); }
       })
       .catch((err) => {
-        console.error('Failed to fetch:', err);
-        setError(err.message);
-        setLoading(false);
+        if (!cancelled) { console.error('Failed to fetch:', err); setError(err.message); setLoading(false); }
       });
-  };
+
+    return () => { cancelled = true; };
+  }, [fetchTrigger]);
 
   useEffect(() => {
-    fetchData();
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchData]);
 
   const items = data[tab] || [];
 
@@ -98,9 +85,7 @@ export default function NewsEventsPage() {
 
       {/* error message */}
       {error && (
-        <motion.section
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
+        <section
           style={{ background: '#fee2e2', padding: '2rem 1.5rem' }}
         >
           <div style={{ maxWidth: '1280px', margin: '0 auto', color: '#991b1b' }}>
@@ -119,30 +104,25 @@ export default function NewsEventsPage() {
               Retry
             </button>
           </div>
-        </motion.section>
+        </section>
       )}
 
       {/* loading state */}
       {loading && !error && (
-        <motion.section
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+        <section
           style={{ background: '#f6f7f9', padding: '3rem 1.5rem' }}
         >
           <div style={{ maxWidth: '1280px', margin: '0 auto', textAlign: 'center' }}>
             <p style={{ color: '#666' }}>Loading events and news...</p>
           </div>
-        </motion.section>
+        </section>
       )}
 
       {/* content */}
       {!loading && !error && (
         <>
           {/* info section */}
-          <motion.section
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+          <section
             style={{ background: 'var(--blue-ghost)', padding: '3rem 1.5rem' }}
           >
             <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
@@ -171,18 +151,16 @@ export default function NewsEventsPage() {
                 {items.length} {tab === 'events' ? 'Upcoming Events' : 'News Articles'}
               </h2>
             </div>
-          </motion.section>
+          </section>
 
           {/* tabs */}
           <section style={{ background: '#fff', borderBottom: '2px solid #eee', paddingTop: '2rem' }}>
             <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem 1.5rem' }}>
               <div style={{ display: 'flex', gap: '2rem', borderBottom: '1px solid #eee', marginBottom: '2rem' }}>
                 {(['events', 'news'] as const).map((t) => (
-                  <motion.button
+                  <button
                     key={t}
                     onClick={() => setTab(t)}
-                    whileHover={{ opacity: 0.8 }}
-                    whileTap={{ scale: 0.98 }}
                     style={{
                       background: 'none',
                       border: 'none',
@@ -194,16 +172,14 @@ export default function NewsEventsPage() {
                       cursor: 'pointer',
                       borderBottom: tab === t ? '2px solid var(--gold-bright)' : 'none',
                       marginBottom: '-1px',
-                      transition: 'color 0.2s',
+                      transition: 'color 0.2s, opacity 0.2s',
                     }}
                   >
                     {t === 'events' ? '📅 Events' : '📰 News'} ({items.length})
-                  </motion.button>
+                  </button>
                 ))}
-                <motion.button
+                <button
                   onClick={fetchData}
-                  whileHover={{ rotate: 180 }}
-                  transition={{ duration: 0.5 }}
                   style={{
                     marginLeft: 'auto',
                     background: 'none',
@@ -211,20 +187,19 @@ export default function NewsEventsPage() {
                     cursor: 'pointer',
                     fontSize: '1.2rem',
                     opacity: loading ? 0.5 : 1,
+                    transition: 'transform 0.5s',
                   }}
                   title="Refresh data"
                 >
                   🔄
-                </motion.button>
+                </button>
               </div>
             </div>
           </section>
 
           {/* empty state */}
           {items.length === 0 && (
-            <motion.section
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+            <section
               style={{ padding: '4rem 1.5rem', background: '#f9fafb' }}
             >
               <div style={{ maxWidth: '1280px', margin: '0 auto', textAlign: 'center', color: '#999' }}>
@@ -235,17 +210,14 @@ export default function NewsEventsPage() {
                   No {tab} posted yet. Check back soon!
                 </p>
               </div>
-            </motion.section>
+            </section>
           )}
 
           {/* items grid */}
           {items.length > 0 && (
             <section style={{ padding: '3rem 1.5rem', background: '#f9fafb' }}>
               <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
+                <div
                   style={{
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
@@ -255,10 +227,8 @@ export default function NewsEventsPage() {
                   {items.map((item: EventItem | NewsItem) => {
                     const images = getImages(item);
                     return (
-                      <motion.div
+                      <div
                         key={item.id}
-                        variants={itemVariants}
-                        whileHover={{ y: -8, transition: { duration: 0.3 } }}
                         style={{
                           background: '#fff',
                           borderRadius: '8px',
@@ -267,7 +237,10 @@ export default function NewsEventsPage() {
                           display: 'flex',
                           flexDirection: 'column',
                           cursor: 'pointer',
+                          transition: 'transform 0.3s',
                         }}
+                        onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-8px)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
                       >
                         {/* images */}
                         {images.length > 0 && (
@@ -283,10 +256,7 @@ export default function NewsEventsPage() {
                             {images.length > 1 ? (
                               <FadeSlideshow images={images} interval={4000} />
                             ) : (
-                              <motion.img
-                                initial={{ scale: 1.05 }}
-                                animate={{ scale: 1 }}
-                                transition={{ duration: 0.8 }}
+                              <img
                                 src={images[0]}
                                 alt={item.title}
                                 style={{
@@ -329,10 +299,7 @@ export default function NewsEventsPage() {
                           {tab === 'events' && (
                             <>
                               {(item as EventItem).date && (
-                                <motion.div
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ delay: 0.1 }}
+                                <div
                                   style={{
                                     display: 'inline-flex',
                                     alignItems: 'center',
@@ -356,13 +323,10 @@ export default function NewsEventsPage() {
                                       year: 'numeric',
                                     })}
                                   </span>
-                                </motion.div>
+                                </div>
                               )}
                               {(item as EventItem).location && (
-                                <motion.div
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ delay: 0.2 }}
+                                <div
                                   style={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -374,16 +338,13 @@ export default function NewsEventsPage() {
                                   }}
                                 >
                                   📍 {(item as EventItem).location}
-                                </motion.div>
+                                </div>
                               )}
                             </>
                           )}
 
                           {tab === 'news' && (
-                            <motion.div
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              transition={{ delay: 0.1 }}
+                            <div
                               style={{
                                 fontSize: '0.8rem',
                                 color: '#999',
@@ -398,7 +359,7 @@ export default function NewsEventsPage() {
                                 month: 'long',
                                 day: 'numeric',
                               })}
-                            </motion.div>
+                            </div>
                           )}
 
                           <h3
@@ -440,10 +401,10 @@ export default function NewsEventsPage() {
                             url={`${typeof window !== 'undefined' ? window.location.origin : 'https://rcnbustani.co.ke'}/news-events?item=${item.id}`}
                           />
                         </div>
-                      </motion.div>
+                      </div>
                     );
                   })}
-                </motion.div>
+                </div>
               </div>
             </section>
           )}

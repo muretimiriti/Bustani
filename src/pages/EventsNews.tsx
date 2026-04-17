@@ -1,5 +1,5 @@
 // Events & News display page - fetches from API
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 const API = import.meta.env.VITE_API_URL || '/api.php'
 
@@ -30,47 +30,38 @@ export default function EventsNews() {
   const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<'events' | 'news'>('events')
 
-  const fetchData = () => {
+  const [fetchTrigger, setFetchTrigger] = useState(0)
+
+  const fetchData = useCallback(() => {
+    setFetchTrigger((n) => n + 1)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
     setLoading(true)
     setError(null)
-    console.log('=== FETCH START ===')
-    console.log('API URL:', API)
-    console.log('Full URL:', window.location.origin + API)
-    
+
     fetch(API)
       .then((r) => {
-        console.log('Fetch response status:', r.status, r.statusText)
         if (!r.ok) throw new Error(`API error: ${r.status} ${r.statusText}`)
         return r.json()
       })
       .then((d) => {
-        console.log('✅ API Response received:', d)
-        console.log('Events count:', d.events?.length || 0)
-        console.log('News count:', d.news?.length || 0)
-        setData(d)
-        setLoading(false)
+        if (!cancelled) { setData(d); setLoading(false) }
       })
       .catch((err) => {
-        console.error('❌ Fetch failed:', err.message)
-        setError(err.message)
-        setLoading(false)
+        if (!cancelled) { console.error('Fetch failed:', err.message); setError(err.message); setLoading(false) }
       })
-  }
+
+    return () => { cancelled = true }
+  }, [fetchTrigger])
 
   useEffect(() => {
-    fetchData()
-    // Refetch every 5 seconds to pick up new events
     const interval = setInterval(fetchData, 5000)
     return () => clearInterval(interval)
-  }, [])
+  }, [fetchData])
 
   const items = data[tab] || []
-
-  useEffect(() => {
-    console.log('Tab changed to:', tab)
-    console.log('Current items array:', items)
-    console.log('Items count:', items.length)
-  }, [tab, items])
 
   return (
     <div style={s.page}>
@@ -195,7 +186,6 @@ function EventCard({ item }: { item: EventItem }) {
           title={item.title}
           date={item.date}
           location={item.location}
-          type="event"
         />
       </div>
     </div>
@@ -236,7 +226,7 @@ function NewsCard({ item }: { item: NewsItem }) {
             {expanded ? 'Show less' : 'Read more'}
           </button>
         )}
-        <ShareRow title={item.title} type="news" />
+        <ShareRow title={item.title} />
       </div>
     </div>
   )
@@ -247,12 +237,10 @@ function ShareRow({
   title,
   date,
   location,
-  type,
 }: {
   title: string
   date?: string
   location?: string
-  type: 'event' | 'news'
 }) {
   const url =
     typeof window !== 'undefined'
