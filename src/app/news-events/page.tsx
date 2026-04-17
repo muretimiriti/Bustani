@@ -58,7 +58,7 @@ export default function NewsEventsPage() {
   }, [fetchTrigger]);
 
   useEffect(() => {
-    const interval = setInterval(fetchData, 5000);
+    const interval = setInterval(fetchData, 30 * 60 * 1000);
     return () => clearInterval(interval);
   }, [fetchData]);
 
