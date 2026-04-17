@@ -2,6 +2,12 @@ import { Link } from 'react-router-dom';
 import PageHero from '@/components/PageHero';
 import FadeSlideshow from '@/components/FadeSlideshow';
 
+const gachororoImages = [
+  '/images/WhatsApp Image 2026-04-16 at 09.13.52.jpeg',
+  '/images/WhatsApp Image 2026-04-16 at 09.13.55 (1).jpeg',
+  '/images/WhatsApp Image 2026-04-16 at 09.13.55 (2).jpeg',
+  '/images/WhatsApp Image 2026-04-16 at 09.13.55.jpeg',
+];
 const youngLifeImages = [
   '/images/IMG_9438.jpg', '/images/IMG_0102.jpg', '/images/IMG_0105.jpg',
   '/images/IMG_0221.jpg', '/images/IMG_9451.jpg', '/images/IMG_9946.jpg', '/images/IMG_9566.jpg',
@@ -19,6 +25,7 @@ const completedProjects: { avenue: string; title: string; description: string; s
       'A two-day medical camp (12–13 December 2025) at Gachororo offering general consultation, cancer screening, eye care, ENT services, HIV testing, mental health support, and medication distribution. Over 600 community members were served, in partnership with the Rotary Club of Juja (main sponsor) and the Rotaract Club of Youth Connect Kenya.',
     status: 'Completed',
     highlight: '600+ Served',
+    images: gachororoImages,
   },
   {
     avenue: 'Community Service',
@@ -42,24 +49,31 @@ const completedProjects: { avenue: string; title: string; description: string; s
 
 const focusAreas = [
   {
-    avenue: 'Vocational Service',
-    title: 'Professional Mentorship Programme',
+    avenue: 'Education',
+    title: 'Renovation of Classes & Equipping of Science Lab – Mutundu Comprehensive School',
     description:
-      'Connecting our membership — drawn from diverse professional fields — with emerging talent in the community. Structured mentorship, internship placement, and career guidance.',
+      'Transforming the learning environment by renovating classrooms and providing a fully equipped science lab, enhancing both teaching and practical learning, improving student performance, and opening pathways to STEM careers.',
+    status: 'In Planning',
+  },
+  {
+    avenue: 'Health',
+    title: '1,000 Cataract Surgeries (Rural Kenya)',
+    description:
+      'Restoring sight to individuals affected by avoidable blindness, allowing them to regain independence, return to work, and improve their quality of life.',
+    status: 'In Planning',
+  },
+  {
+    avenue: 'Health',
+    title: 'Provision of 4,000 Eyeglasses',
+    description:
+      'Enhancing vision for students and community members, leading to better academic performance, productivity, and overall wellbeing.',
     status: 'In Planning',
   },
   {
     avenue: 'Community Service',
-    title: 'Environmental Stewardship',
+    title: 'WASH (Water, Sanitation & Hygiene) Projects',
     description:
-      'Tree-planting, waste management, and environmental education in local schools and institutions — building on our vertical gardens pilot from the YoungLife Africa visit.',
-    status: 'Launching Soon',
-  },
-  {
-    avenue: 'International Service',
-    title: 'District 9212 Partnership Projects',
-    description:
-      'Joining hands with fellow District 9212 clubs on international service grants — water, sanitation, and education projects that reflect Rotary\'s global humanitarian mandate.',
+      'Reducing waterborne diseases by improving access to clean water, sanitation facilities, and hygiene education—creating healthier, more resilient communities.',
     status: 'In Planning',
   },
 ];
