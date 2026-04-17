@@ -7,13 +7,13 @@ const PASSWORD = 'rotary2025' // MUST match api.php
 // ─── tiny API helpers ────────────────────────────────────────────────────────
 const fetchAll = () => fetch(API).then(r => r.json())
 
-const createItem = async (type: string, item: any, imageFile: File | null) => {
-  if (imageFile) {
+const createItem = async (type: string, item: any, imageFiles: File[]) => {
+  if (imageFiles && imageFiles.length > 0) {
     const fd = new FormData()
     fd.append('password', PASSWORD)
     fd.append('type', type)
     fd.append('item', JSON.stringify(item))
-    fd.append('image', imageFile)
+    imageFiles.forEach((file) => fd.append('images[]', file))
     return fetch(API, { method: 'POST', body: fd }).then(r => r.json())
   }
   return fetch(API, {
@@ -45,12 +45,13 @@ export default function Admin() {
   const [pwError, setPwError] = useState('')
   const [tab, setTab] = useState<TabType>('events')
   const [form, setForm] = useState<FormData>(blankEvent)
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [preview, setPreview] = useState<string | null>(null)
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [previews, setPreviews] = useState<string[]>([])
   const [allData, setAllData] = useState({ events: [], news: [] })
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<ToastState>(null)
-  const fileRef = useRef<HTMLInputElement>(null)
+  const [totalImageSize, setTotalImageSize] = useState(0)
+  const filesRef = useRef<HTMLInputElement>(null)
 
   // refresh list after login and tab switch
   useEffect(() => {
@@ -79,20 +80,49 @@ export default function Admin() {
   const switchTab = (t: TabType) => {
     setTab(t)
     setForm(t === 'events' ? blankEvent : blankNews)
-    clearImage()
+    clearImages()
   }
 
-  const clearImage = () => {
-    setImageFile(null)
-    setPreview(null)
-    if (fileRef.current) fileRef.current.value = ''
+  const clearImages = () => {
+    setImageFiles([])
+    setPreviews([])
+    setTotalImageSize(0)
+    if (filesRef.current) filesRef.current.value = ''
   }
 
-  const pickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0]
-    if (!f) return
-    setImageFile(f)
-    setPreview(URL.createObjectURL(f))
+  const pickImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (!files.length) return
+    
+    let totalSize = totalImageSize
+    const newFiles: File[] = []
+    const newPreviews: string[] = []
+    
+    for (const file of files) {
+      totalSize += file.size
+      if (totalSize > 5 * 1024 * 1024) {
+        showToast('Total image size exceeded 5 MB limit', false)
+        break
+      }
+      newFiles.push(file)
+      newPreviews.push(URL.createObjectURL(file))
+    }
+    
+    setImageFiles([...imageFiles, ...newFiles])
+    setPreviews([...previews, ...newPreviews])
+    setTotalImageSize(totalSize)
+  }
+
+  const removeImage = (idx: number) => {
+    const newFiles = imageFiles.filter((_, i) => i !== idx)
+    const newPreviews = previews.filter((_, i) => i !== idx)
+    const newSize = newFiles.reduce((sum, f) => sum + f.size, 0)
+    
+    setImageFiles(newFiles)
+    setPreviews(newPreviews)
+    setTotalImageSize(newSize)
+    
+    if (filesRef.current) filesRef.current.value = ''
   }
 
   const save = async () => {
@@ -110,13 +140,13 @@ export default function Admin() {
     }
 
     setSaving(true)
-    const res = await createItem(tab, form, imageFile)
+    const res = await createItem(tab, form, imageFiles)
     setSaving(false)
 
     if (res.success) {
       showToast(`${tab === 'events' ? 'Event' : 'Article'} saved!`)
       setForm(tab === 'events' ? blankEvent : blankNews)
-      clearImage()
+      clearImages()
       fetchAll().then(setAllData)
     } else {
       showToast(res.error || 'Save failed', false)
@@ -276,32 +306,64 @@ export default function Admin() {
 
             {/* image upload */}
             <div style={s.field}>
-              <label style={s.label}>Image (optional · max 5 MB)</label>
-              <div style={s.uploadBox} onClick={() => fileRef.current?.click()}>
-                {preview ? (
-                  <img src={preview} alt="preview" style={s.previewImg} />
-                ) : (
+              <label style={s.label}>
+                Images (optional · total max 5 MB · {Math.round(totalImageSize / 1024)} KB used)
+              </label>
+              <div style={s.uploadBox} onClick={() => filesRef.current?.click()}>
+                {previews.length === 0 ? (
                   <div style={s.uploadPlaceholder}>
                     <span style={{ fontSize: 28 }}>🖼️</span>
                     <span style={{ fontSize: 13, color: '#666', marginTop: 4 }}>
-                      Click to choose an image
+                      Click to add images
                     </span>
                     <span style={{ fontSize: 11, color: '#999' }}>
-                      JPG, PNG, WEBP — up to 5 MB
+                      JPG, PNG, WEBP — up to 5 MB total
                     </span>
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: 8 }}>
+                    {previews.map((preview, idx) => (
+                      <div key={idx} style={{ position: 'relative' }}>
+                        <img src={preview} alt={`preview ${idx}`} style={s.previewImg} />
+                        <button
+                          style={s.removeBtn}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            removeImage(idx)
+                          }}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: '#f0f0f0',
+                        borderRadius: 4,
+                        cursor: 'pointer',
+                        fontSize: 24,
+                        minHeight: 60,
+                      }}
+                    >
+                      +
+                    </div>
                   </div>
                 )}
               </div>
               <input
-                ref={fileRef}
+                ref={filesRef}
                 type="file"
                 accept="image/*"
+                multiple
                 style={{ display: 'none' }}
-                onChange={pickImage}
+                onChange={pickImages}
               />
-              {preview && (
-                <button style={s.btnGhost} onClick={clearImage}>
-                  ✕ Remove image
+              {previews.length > 0 && (
+                <button style={s.btnGhost} onClick={clearImages}>
+                  ✕ Clear all images
                 </button>
               )}
             </div>
@@ -330,9 +392,9 @@ export default function Admin() {
             ) : (
               allData[tab].map((item: any) => (
                 <div key={item.id} style={s.listItem}>
-                  {item.image_url && (
-                    <img src={item.image_url} alt={item.title} style={s.listThumb} />
-                  )}
+                  {(item.images && item.images[0]) || item.image_url ? (
+                    <img src={(item.images && item.images[0]) || item.image_url} alt={item.title} style={s.listThumb} />
+                  ) : null}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={s.listTitle}>{item.title}</div>
                     <div style={s.listMeta}>
@@ -344,6 +406,11 @@ export default function Admin() {
                             year: 'numeric',
                           })}
                     </div>
+                    {item.images && item.images.length > 0 && (
+                      <div style={{ fontSize: 11, color: '#999', marginTop: 4 }}>
+                        {item.images.length} image{item.images.length !== 1 ? 's' : ''}
+                      </div>
+                    )}
                   </div>
                   <button
                     style={s.btnDelete}
@@ -486,6 +553,22 @@ const s = {
     maxHeight: 220,
     objectFit: 'cover' as const,
     display: 'block',
+  } as React.CSSProperties,
+  removeBtn: {
+    position: 'absolute',
+    top: -5,
+    right: -5,
+    background: '#e74c3c',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '50%',
+    width: 24,
+    height: 24,
+    fontSize: 14,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   } as React.CSSProperties,
 
   btnPrimary: {

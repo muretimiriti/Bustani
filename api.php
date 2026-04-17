@@ -54,31 +54,47 @@ if ($method === 'POST') {
         exit;
     }
 
-    // Handle image upload
-    if (!empty($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    // Handle multiple image uploads (5MB total limit per item)
+    $item['images'] = []; // Start with empty images array
+    $totalSize = 0;
+    
+    if (!empty($_FILES['images'])) {
         $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-        $mime    = mime_content_type($_FILES['image']['tmp_name']);
-
-        if (!in_array($mime, $allowed)) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Only JPG, PNG, GIF and WEBP images are allowed']);
-            exit;
+        $imageCount = is_array($_FILES['images']['name']) ? count($_FILES['images']['name']) : 1;
+        
+        for ($i = 0; $i < $imageCount; $i++) {
+            if ($_FILES['images']['error'][$i] !== UPLOAD_ERR_OK) continue;
+            
+            $size = $_FILES['images']['size'][$i];
+            $totalSize += $size;
+            
+            if ($totalSize > 5 * 1024 * 1024) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Total image size must be under 5 MB']);
+                exit;
+            }
+            
+            $mime = mime_content_type($_FILES['images']['tmp_name'][$i]);
+            if (!in_array($mime, $allowed)) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Only JPG, PNG, GIF and WEBP images are allowed']);
+                exit;
+            }
+            
+            $ext = pathinfo($_FILES['images']['name'][$i], PATHINFO_EXTENSION);
+            $filename = uniqid('img_', true) . '.' . strtolower($ext);
+            move_uploaded_file($_FILES['images']['tmp_name'][$i], UPLOAD_DIR . $filename);
+            
+            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'];
+            $imageUrl = $protocol . '://' . $host . '/uploads/' . $filename;
+            $item['images'][] = $imageUrl;
         }
-
-        if ($_FILES['image']['size'] > 5 * 1024 * 1024) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Image must be under 5 MB']);
-            exit;
-        }
-
-        $ext      = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        $filename = uniqid('img_', true) . '.' . strtolower($ext);
-        move_uploaded_file($_FILES['image']['tmp_name'], UPLOAD_DIR . $filename);
-
-        // Build public URL — adjust domain if needed
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host     = $_SERVER['HTTP_HOST'];
-        $item['image_url'] = $protocol . '://' . $host . '/uploads/' . $filename;
+    }
+    
+    // Backward compatibility: if no images, set empty array
+    if (empty($item['images'])) {
+        $item['images'] = [];
     }
 
     $item['id']         = uniqid();
@@ -103,10 +119,21 @@ if ($method === 'DELETE') {
     }
 
     foreach ($data[$type] as $item) {
-        if ($item['id'] === $id && !empty($item['image_url'])) {
-            $filename = basename($item['image_url']);
-            $path     = UPLOAD_DIR . $filename;
-            if (file_exists($path)) unlink($path);
+        if ($item['id'] === $id) {
+            // Delete all images (new format)
+            if (!empty($item['images']) && is_array($item['images'])) {
+                foreach ($item['images'] as $imageUrl) {
+                    $filename = basename($imageUrl);
+                    $path = UPLOAD_DIR . $filename;
+                    if (file_exists($path)) unlink($path);
+                }
+            }
+            // Backward compatibility: delete single image_url if present
+            if (!empty($item['image_url'])) {
+                $filename = basename($item['image_url']);
+                $path = UPLOAD_DIR . $filename;
+                if (file_exists($path)) unlink($path);
+            }
         }
     }
 
