@@ -224,6 +224,36 @@ install_argocd() {
     fi
 }
 
+ensure_argocd_application() {
+        log_info "Ensuring Argo CD application exists..."
+
+        cat <<EOF | kubectl apply -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+    name: $ARGOCD_APP_NAME
+    namespace: argocd
+spec:
+    project: default
+    source:
+        repoURL: $GIT_REPO
+        targetRevision: $GIT_BRANCH
+        path: k8s/argocd
+        kustomize:
+            images:
+            - bustani=$IMAGE_NAME:$IMAGE_TAG
+    destination:
+        server: https://kubernetes.default.svc
+        namespace: $NAMESPACE
+    syncPolicy:
+        automated:
+            prune: true
+            selfHeal: true
+EOF
+
+        kubectl annotate application "$ARGOCD_APP_NAME" -n argocd argocd.argoproj.io/refresh=hard --overwrite >/dev/null 2>&1 || true
+}
+
 install_ingress_controller() {
     log_info "Checking if ingress-nginx controller is installed..."
 
@@ -408,32 +438,57 @@ start_argocd_portforward() {
 start_ingress_portforward() {
     log_info "Setting up ingress-nginx controller port-forward..."
 
+    kubectl wait --for=condition=available deployment/ingress-nginx-controller -n ingress-nginx --timeout=300s >/dev/null 2>&1 || true
+
     if lsof -ti:$INGRESS_LOCAL_PORT &> /dev/null; then
         log_warning "Port $INGRESS_LOCAL_PORT already in use. Stopping existing process..."
         kill "$(lsof -ti:$INGRESS_LOCAL_PORT)" 2>/dev/null || true
         sleep 1
     fi
 
-    nohup kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller ${INGRESS_LOCAL_PORT}:80 > /tmp/ingress-nginx-pf.log 2>&1 &
-    INGRESS_PF_PID=$!
-    sleep 2
+    local attempts=0
+    while [ $attempts -lt 12 ]; do
+        nohup kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller ${INGRESS_LOCAL_PORT}:80 > /tmp/ingress-nginx-pf.log 2>&1 &
+        INGRESS_PF_PID=$!
+        sleep 3
 
-    if kill -0 $INGRESS_PF_PID 2>/dev/null; then
-        echo -e "${GREEN}Ingress Controller:${NC} http://localhost:${INGRESS_LOCAL_PORT}"
-        echo -e "${GREEN}Ingress PF PID:${NC} $INGRESS_PF_PID"
-        echo -e "${BLUE}Host mapping:${NC} echo '127.0.0.1 bustani.local' | sudo tee -a /etc/hosts"
-    else
-        log_warning "Ingress port-forward may have failed. Check logs: /tmp/ingress-nginx-pf.log"
-    fi
+        if kill -0 $INGRESS_PF_PID 2>/dev/null; then
+            echo -e "${GREEN}Ingress Controller:${NC} http://localhost:${INGRESS_LOCAL_PORT}"
+            echo -e "${GREEN}Ingress PF PID:${NC} $INGRESS_PF_PID"
+            echo -e "${BLUE}Host mapping:${NC} echo '127.0.0.1 bustani.local' | sudo tee -a /etc/hosts"
+            return
+        fi
+
+        attempts=$((attempts + 1))
+        sleep 2
+    done
+
+    log_warning "Ingress port-forward may have failed after retries. Check logs: /tmp/ingress-nginx-pf.log"
 }
 
 start_app_portforward() {
     log_info "Setting up app service port-forward..."
 
+    ensure_argocd_application
+
+    local svc_attempts=0
+    while [ $svc_attempts -lt 20 ]; do
+        if kubectl get svc -n "$NAMESPACE" bustani-app >/dev/null 2>&1; then
+            break
+        fi
+        svc_attempts=$((svc_attempts + 1))
+        sleep 6
+    done
+
     if lsof -ti:$APP_LOCAL_PORT &> /dev/null; then
         log_warning "Port $APP_LOCAL_PORT already in use. Stopping existing process..."
         kill "$(lsof -ti:$APP_LOCAL_PORT)" 2>/dev/null || true
         sleep 1
+    fi
+
+    if ! kubectl get svc -n "$NAMESPACE" bustani-app >/dev/null 2>&1; then
+        log_warning "App service bustani-app is not available yet; skipping app port-forward for now"
+        return
     fi
 
     nohup kubectl port-forward -n "$NAMESPACE" svc/bustani-app ${APP_LOCAL_PORT}:80 > /tmp/bustani-app-pf.log 2>&1 &
