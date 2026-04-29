@@ -220,6 +220,21 @@ install_argocd() {
     fi
 }
 
+install_ingress_controller() {
+    log_info "Checking if ingress-nginx controller is installed..."
+
+    kubectl get namespace ingress-nginx >/dev/null 2>&1 || kubectl create namespace ingress-nginx
+
+    if kubectl get deployment ingress-nginx-controller -n ingress-nginx >/dev/null 2>&1; then
+        log_success "ingress-nginx controller already installed"
+    else
+        log_info "Installing ingress-nginx controller..."
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+        kubectl wait --for=condition=available deployment/ingress-nginx-controller -n ingress-nginx --timeout=300s
+        log_success "ingress-nginx controller installed successfully"
+    fi
+}
+
 apply_rbac() {
     log_info "Applying RBAC and ServiceAccount..."
     
@@ -401,6 +416,9 @@ monitor_pipeline() {
     echo -e "${BLUE}Describe pipeline run:${NC}"
     echo "  tkn pipelinerun describe $PIPELINERUN_NAME -n $NAMESPACE"
     echo ""
+    echo -e "${BLUE}Ingress host mapping (after deploy):${NC}"
+    echo "  echo '127.0.0.1 bustani.local' | sudo tee -a /etc/hosts"
+    echo ""
 }
 
 show_usage() {
@@ -519,6 +537,7 @@ main() {
     if [ "$skip_install" != true ]; then
         install_tekton
         install_argocd
+        install_ingress_controller
     fi
     
     apply_rbac
