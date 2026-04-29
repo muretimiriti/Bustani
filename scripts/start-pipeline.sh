@@ -26,6 +26,10 @@ DASHBOARD_PF_PID=""
 ARGOCD_LOCAL_PORT="${ARGOCD_LOCAL_PORT:-8080}"
 ARGOCD_PF_PID=""
 ARGOCD_APP_NAME="${ARGOCD_APP_NAME:-bustani-app}"
+INGRESS_LOCAL_PORT="${INGRESS_LOCAL_PORT:-8081}"
+INGRESS_PF_PID=""
+APP_LOCAL_PORT="${APP_LOCAL_PORT:-3000}"
+APP_PF_PID=""
 
 # Functions
 log_info() {
@@ -349,11 +353,11 @@ start_dashboard_portforward() {
     fi
     
     # Start port-forward in background
-    kubectl port-forward \
+    nohup kubectl port-forward \
         -n tekton-pipelines \
         svc/tekton-dashboard \
         ${DASHBOARD_LOCAL_PORT}:9097 \
-        &> /tmp/tekton-dashboard-pf.log &
+        > /tmp/tekton-dashboard-pf.log 2>&1 &
     
     DASHBOARD_PF_PID=$!
     sleep 2
@@ -371,8 +375,6 @@ start_dashboard_portforward() {
         echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
         echo ""
         
-        # Register cleanup on script exit
-        trap 'log_info "Stopping Tekton Dashboard port-forward (PID: $DASHBOARD_PF_PID)..."; kill $DASHBOARD_PF_PID 2>/dev/null || true' EXIT
     else
         log_warning "Port-forward may have failed. Check logs: /tmp/tekton-dashboard-pf.log"
     fi
@@ -387,7 +389,7 @@ start_argocd_portforward() {
         sleep 1
     fi
 
-    kubectl port-forward -n argocd svc/argocd-server ${ARGOCD_LOCAL_PORT}:443 &> /tmp/argocd-pf.log &
+    nohup kubectl port-forward -n argocd svc/argocd-server ${ARGOCD_LOCAL_PORT}:443 > /tmp/argocd-pf.log 2>&1 &
     ARGOCD_PF_PID=$!
     sleep 2
 
@@ -400,6 +402,49 @@ start_argocd_portforward() {
         echo ""
     else
         log_warning "Argo CD port-forward may have failed. Check logs: /tmp/argocd-pf.log"
+    fi
+}
+
+start_ingress_portforward() {
+    log_info "Setting up ingress-nginx controller port-forward..."
+
+    if lsof -ti:$INGRESS_LOCAL_PORT &> /dev/null; then
+        log_warning "Port $INGRESS_LOCAL_PORT already in use. Stopping existing process..."
+        kill "$(lsof -ti:$INGRESS_LOCAL_PORT)" 2>/dev/null || true
+        sleep 1
+    fi
+
+    nohup kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller ${INGRESS_LOCAL_PORT}:80 > /tmp/ingress-nginx-pf.log 2>&1 &
+    INGRESS_PF_PID=$!
+    sleep 2
+
+    if kill -0 $INGRESS_PF_PID 2>/dev/null; then
+        echo -e "${GREEN}Ingress Controller:${NC} http://localhost:${INGRESS_LOCAL_PORT}"
+        echo -e "${GREEN}Ingress PF PID:${NC} $INGRESS_PF_PID"
+        echo -e "${BLUE}Host mapping:${NC} echo '127.0.0.1 bustani.local' | sudo tee -a /etc/hosts"
+    else
+        log_warning "Ingress port-forward may have failed. Check logs: /tmp/ingress-nginx-pf.log"
+    fi
+}
+
+start_app_portforward() {
+    log_info "Setting up app service port-forward..."
+
+    if lsof -ti:$APP_LOCAL_PORT &> /dev/null; then
+        log_warning "Port $APP_LOCAL_PORT already in use. Stopping existing process..."
+        kill "$(lsof -ti:$APP_LOCAL_PORT)" 2>/dev/null || true
+        sleep 1
+    fi
+
+    nohup kubectl port-forward -n "$NAMESPACE" svc/bustani-app ${APP_LOCAL_PORT}:80 > /tmp/bustani-app-pf.log 2>&1 &
+    APP_PF_PID=$!
+    sleep 2
+
+    if kill -0 $APP_PF_PID 2>/dev/null; then
+        echo -e "${GREEN}Bustani App:${NC} http://localhost:${APP_LOCAL_PORT}"
+        echo -e "${GREEN}App PF PID:${NC} $APP_PF_PID"
+    else
+        log_warning "App port-forward may have failed. Service may not be deployed yet. Check logs: /tmp/bustani-app-pf.log"
     fi
 }
 
@@ -440,6 +485,12 @@ Options:
     --argocd                Start Argo CD port-forward (default: enabled)
     --no-argocd             Skip Argo CD port-forward
     --argocd-port PORT      Local port for Argo CD UI (default: 8080)
+    --ingress-forward       Start ingress-nginx port-forward (default: enabled)
+    --no-ingress-forward    Skip ingress-nginx port-forward
+    --ingress-port PORT     Local port for ingress-nginx controller (default: 8081)
+    --app-forward           Start bustani app service port-forward (default: enabled)
+    --no-app-forward        Skip bustani app service port-forward
+    --app-port PORT         Local port for bustani app service (default: 3000)
 
 Example:
     $0 -b develop -t v1.0.0 --monitor
@@ -459,6 +510,8 @@ main() {
     local monitor=false
     local dashboard=true
     local argocd=true
+    local ingress_forward=true
+    local app_forward=true
     
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -518,6 +571,30 @@ main() {
                 ARGOCD_LOCAL_PORT="$2"
                 shift 2
                 ;;
+            --ingress-forward)
+                ingress_forward=true
+                shift
+                ;;
+            --no-ingress-forward)
+                ingress_forward=false
+                shift
+                ;;
+            --ingress-port)
+                INGRESS_LOCAL_PORT="$2"
+                shift 2
+                ;;
+            --app-forward)
+                app_forward=true
+                shift
+                ;;
+            --no-app-forward)
+                app_forward=false
+                shift
+                ;;
+            --app-port)
+                APP_LOCAL_PORT="$2"
+                shift 2
+                ;;
             *)
                 log_error "Unknown option: $1"
                 show_usage
@@ -558,17 +635,21 @@ main() {
     if [ "$argocd" = true ]; then
         start_argocd_portforward
     fi
+
+    if [ "$ingress_forward" = true ]; then
+        start_ingress_portforward
+    fi
+
+    if [ "$app_forward" = true ]; then
+        start_app_portforward
+    fi
     
     if [ "$monitor" = true ]; then
         echo "Starting log monitoring... (Press Ctrl+C to stop)"
         echo ""
         tkn pipelinerun logs $PIPELINERUN_NAME -n $NAMESPACE -f
     else
-        if [ "$dashboard" = true ] && [ -n "$DASHBOARD_PF_PID" ]; then
-            log_info "Dashboard port-forward running in background (PID: $DASHBOARD_PF_PID)"
-            log_info "Press Ctrl+C to stop port-forward and exit, or run with --monitor to tail logs"
-            wait $DASHBOARD_PF_PID
-        fi
+        log_info "Port-forwards are running in background (logs in /tmp/*-pf.log)."
     fi
 }
 
