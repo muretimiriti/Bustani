@@ -9,15 +9,15 @@ spec:
   - name: git-repository
     type: string
     description: Git repository URL
-    default: https://github.com/mureti/Bustani
   - name: git-revision
     type: string
     description: Git branch or tag
-    default: main
+  - name: git-username
+    type: string
+    description: Git username/owner associated with the repository
   - name: image-name
     type: string
     description: Container image name with registry
-    default: bustani/bustani
   - name: image-tag
     type: string
     description: Container image tag
@@ -45,6 +45,8 @@ spec:
       value: $(params.git-repository)
     - name: revision
       value: $(params.git-revision)
+    - name: username
+      value: $(params.git-username)
     - name: depth
       value: "1"
     workspaces:

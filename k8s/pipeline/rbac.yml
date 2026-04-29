@@ -3,6 +3,8 @@ kind: ServiceAccount
 metadata:
   name: tekton-sa
   namespace: default
+imagePullSecrets:
+- name: docker-registry
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -17,31 +19,3 @@ subjects:
 - kind: ServiceAccount
   name: tekton-sa
   namespace: default
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: registry-credentials
-  namespace: default
-type: kubernetes.io/dockercfg
-stringData:
-  config.json: |
-    {
-      "auths": {
-        "docker.io": {
-          "auth": "BASE64_ENCODED_CREDENTIALS"
-        }
-      }
-    }
-
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: kubeconfig
-  namespace: default
-type: Opaque
-stringData:
-  kubeconfig: |
-    PASTE_KUBECONFIG_HERE

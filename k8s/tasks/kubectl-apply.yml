@@ -1,7 +1,8 @@
 apiVersion: tekton.dev/v1beta1
-kind: ClusterTask
+kind: Task
 metadata:
   name: kubectl-apply
+  namespace: default
 spec:
   description: Apply Kubernetes manifests using kubectl
   params:
@@ -27,10 +28,9 @@ spec:
     env:
     - name: KUBECONFIG
       value: /root/.kube/config
-    command:
-    - sh
-    - -c
     script: |
+      #!/bin/sh
+      set -e
       mkdir -p /root/.kube
       cat /var/secrets/kubeconfig > /root/.kube/config
       
