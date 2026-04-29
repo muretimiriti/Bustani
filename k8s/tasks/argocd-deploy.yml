@@ -1,0 +1,62 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: argocd-deploy
+  namespace: default
+spec:
+  description: Deploy manifests via Argo CD Application
+  params:
+  - name: app-name
+    type: string
+    description: Argo CD application name
+  - name: repo-url
+    type: string
+    description: Git repository URL
+  - name: target-revision
+    type: string
+    description: Git branch/tag to sync
+    default: main
+  - name: app-path
+    type: string
+    description: Repository path containing manifests
+    default: docker
+  - name: destination-namespace
+    type: string
+    description: Destination namespace for deployed resources
+    default: default
+  - name: argocd-namespace
+    type: string
+    description: Namespace where Argo CD is installed
+    default: argocd
+  steps:
+  - name: upsert-application
+    image: bitnami/kubectl:latest
+    script: |
+      #!/bin/sh
+      set -e
+
+      cat <<EOF | kubectl apply -f -
+      apiVersion: argoproj.io/v1alpha1
+      kind: Application
+      metadata:
+        name: $(params.app-name)
+        namespace: $(params.argocd-namespace)
+      spec:
+        project: default
+        source:
+          repoURL: $(params.repo-url)
+          targetRevision: $(params.target-revision)
+          path: $(params.app-path)
+        destination:
+          server: https://kubernetes.default.svc
+          namespace: $(params.destination-namespace)
+        syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+      EOF
+
+      kubectl annotate application $(params.app-name) \
+        -n $(params.argocd-namespace) \
+        argocd.argoproj.io/refresh=hard \
+        --overwrite

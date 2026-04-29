@@ -30,6 +30,10 @@ spec:
     type: string
     description: Kubernetes namespace for deployment
     default: default
+  - name: argocd-app-name
+    type: string
+    description: Argo CD application name
+    default: bustani-app
   
   workspaces:
   - name: shared-workspace
@@ -81,9 +85,29 @@ spec:
     - name: source
       workspace: shared-workspace
   
-  # Task 4: Build and Push Image with Kaniko
-  - name: build-image
+  # Task 4: Trivy Filesystem Scan Before Build
+  - name: trivy-pre-build
     runAfter: [run-tests]
+    taskRef:
+      name: trivy-scan
+    params:
+    - name: scan-target
+      value: $(workspaces.source.path)
+    - name: scan-type
+      value: fs
+    - name: severity
+      value: $(params.trivy-severity)
+    - name: format
+      value: table
+    - name: exit-code
+      value: "0"
+    workspaces:
+    - name: source
+      workspace: shared-workspace
+
+  # Task 5: Build and Push Image with Kaniko
+  - name: build-image
+    runAfter: [trivy-pre-build]
     taskRef:
       name: kaniko-build
     params:
@@ -101,13 +125,13 @@ spec:
     - name: source
       workspace: shared-workspace
   
-  # Task 5: Scan Image for Vulnerabilities
+  # Task 6: Scan Image for Vulnerabilities
   - name: scan-image
     runAfter: [build-image]
     taskRef:
       name: trivy-scan
     params:
-    - name: image
+    - name: scan-target
       value: $(params.image-name):$(params.image-tag)
     - name: scan-type
       value: image
@@ -117,19 +141,23 @@ spec:
       value: table
     - name: exit-code
       value: "0"
-  
-  # Task 6: Deploy to Kubernetes
-  - name: deploy-to-k8s
-    runAfter: [scan-image]
-    taskRef:
-      name: kubectl-apply
-    params:
-    - name: manifestsDir
-      value: k8s/
-    - name: kubeconfig-secret-name
-      value: kubeconfig
-    - name: namespace
-      value: $(params.namespace)
     workspaces:
     - name: source
       workspace: shared-workspace
+  
+  # Task 7: Deploy to Argo CD
+  - name: deploy-to-argocd
+    runAfter: [scan-image]
+    taskRef:
+      name: argocd-deploy
+    params:
+    - name: app-name
+      value: $(params.argocd-app-name)
+    - name: repo-url
+      value: $(params.git-repository)
+    - name: target-revision
+      value: $(params.git-revision)
+    - name: app-path
+      value: docker
+    - name: destination-namespace
+      value: $(params.namespace)

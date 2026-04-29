@@ -6,9 +6,14 @@ metadata:
 spec:
   description: Scan container images and filesystems for vulnerabilities with Trivy
   params:
+  - name: scan-target
+    type: string
+    description: Scan target (container image for image scan, path for fs scan)
+    default: ""
   - name: image
     type: string
-    description: Container image to scan (e.g., myregistry/myimage:tag)
+    description: Backward-compatible alias for image target
+    default: ""
   - name: scan-type
     type: string
     description: Type of scan - image or fs (filesystem)
@@ -25,6 +30,9 @@ spec:
     type: string
     description: Exit code when vulnerabilities found (0 or 1)
     default: "0"
+  workspaces:
+  - name: source
+    description: Source workspace for filesystem scanning
   results:
   - name: scan-result
     description: Vulnerability scan result
@@ -33,13 +41,26 @@ spec:
   - name: trivy-scan
     image: aquasec/trivy:latest
     script: |
+      TARGET="$(params.scan-target)"
+      if [ -z "$TARGET" ]; then
+        TARGET="$(params.image)"
+      fi
+      if [ "$(params.scan-type)" = "fs" ] && [ -z "$TARGET" ]; then
+        TARGET="$(workspaces.source.path)"
+      fi
+
+      if [ -z "$TARGET" ]; then
+        echo "No trivy scan target was provided"
+        exit 1
+      fi
+
       set +e
       
       OUTPUT=$(trivy $(params.scan-type) \
         --exit-code $(params.exit-code) \
         --severity $(params.severity) \
         --format $(params.format) \
-        $(params.image))
+        "$TARGET")
       
       RESULT=$?
       

@@ -23,6 +23,9 @@ IMAGE_NAME="${IMAGE_NAME:-}"
 IMAGE_TAG="${IMAGE_TAG:-latest}"
 DASHBOARD_LOCAL_PORT="${DASHBOARD_LOCAL_PORT:-9097}"
 DASHBOARD_PF_PID=""
+ARGOCD_LOCAL_PORT="${ARGOCD_LOCAL_PORT:-8080}"
+ARGOCD_PF_PID=""
+ARGOCD_APP_NAME="${ARGOCD_APP_NAME:-bustani-app}"
 
 # Functions
 log_info() {
@@ -202,6 +205,21 @@ install_tekton() {
     fi
 }
 
+install_argocd() {
+    log_info "Checking if Argo CD is installed..."
+
+    kubectl get namespace argocd >/dev/null 2>&1 || kubectl create namespace argocd
+
+    if kubectl get deployment argocd-server -n argocd >/dev/null 2>&1; then
+        log_success "Argo CD already installed"
+    else
+        log_info "Installing Argo CD..."
+        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        kubectl wait --for=condition=available deployment/argocd-server -n argocd --timeout=300s
+        log_success "Argo CD installed successfully"
+    fi
+}
+
 apply_rbac() {
     log_info "Applying RBAC and ServiceAccount..."
     
@@ -276,6 +294,7 @@ create_pipelinerun() {
             {"name": "image-name", "value": "$IMAGE_NAME"},
             {"name": "image-tag", "value": "$IMAGE_TAG"},
             {"name": "trivy-severity", "value": "CRITICAL,HIGH"},
+            {"name": "argocd-app-name", "value": "$ARGOCD_APP_NAME"},
             {"name": "namespace", "value": "$NAMESPACE"}
         ],
         "workspaces": [
@@ -344,6 +363,31 @@ start_dashboard_portforward() {
     fi
 }
 
+start_argocd_portforward() {
+    log_info "Setting up Argo CD port-forward..."
+
+    if lsof -ti:$ARGOCD_LOCAL_PORT &> /dev/null; then
+        log_warning "Port $ARGOCD_LOCAL_PORT already in use. Stopping existing process..."
+        kill "$(lsof -ti:$ARGOCD_LOCAL_PORT)" 2>/dev/null || true
+        sleep 1
+    fi
+
+    kubectl port-forward -n argocd svc/argocd-server ${ARGOCD_LOCAL_PORT}:443 &> /tmp/argocd-pf.log &
+    ARGOCD_PF_PID=$!
+    sleep 2
+
+    if kill -0 $ARGOCD_PF_PID 2>/dev/null; then
+        echo ""
+        echo -e "${GREEN}Argo CD UI:${NC} https://localhost:${ARGOCD_LOCAL_PORT}"
+        echo -e "${GREEN}Argo CD Port-forward PID:${NC} $ARGOCD_PF_PID"
+        echo -e "${BLUE}Get Argo CD admin password:${NC}"
+        echo "  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d; echo"
+        echo ""
+    else
+        log_warning "Argo CD port-forward may have failed. Check logs: /tmp/argocd-pf.log"
+    fi
+}
+
 monitor_pipeline() {
     log_info "Monitoring pipeline execution..."
     log_info "Run the following commands to monitor:"
@@ -375,6 +419,9 @@ Options:
     --dashboard             Start Tekton Dashboard port-forward (default: enabled)
     --no-dashboard          Skip Tekton Dashboard port-forward
     --dashboard-port PORT   Local port for Dashboard (default: 9097)
+    --argocd                Start Argo CD port-forward (default: enabled)
+    --no-argocd             Skip Argo CD port-forward
+    --argocd-port PORT      Local port for Argo CD UI (default: 8080)
 
 Example:
     $0 -b develop -t v1.0.0 --monitor
@@ -393,6 +440,7 @@ main() {
     local skip_install=false
     local monitor=false
     local dashboard=true
+    local argocd=true
     
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -440,6 +488,18 @@ main() {
                 DASHBOARD_LOCAL_PORT="$2"
                 shift 2
                 ;;
+            --argocd)
+                argocd=true
+                shift
+                ;;
+            --no-argocd)
+                argocd=false
+                shift
+                ;;
+            --argocd-port)
+                ARGOCD_LOCAL_PORT="$2"
+                shift 2
+                ;;
             *)
                 log_error "Unknown option: $1"
                 show_usage
@@ -458,6 +518,7 @@ main() {
     
     if [ "$skip_install" != true ]; then
         install_tekton
+        install_argocd
     fi
     
     apply_rbac
@@ -473,6 +534,10 @@ main() {
     
     if [ "$dashboard" = true ]; then
         start_dashboard_portforward
+    fi
+
+    if [ "$argocd" = true ]; then
+        start_argocd_portforward
     fi
     
     if [ "$monitor" = true ]; then
