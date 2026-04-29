@@ -158,6 +158,10 @@ spec:
     - name: target-revision
       value: $(params.git-revision)
     - name: app-path
-      value: docker
+      value: k8s/argocd
+    - name: image-name
+      value: $(params.image-name)
+    - name: image-tag
+      value: $(params.image-tag)
     - name: destination-namespace
       value: $(params.namespace)

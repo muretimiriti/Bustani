@@ -19,7 +19,14 @@ spec:
   - name: app-path
     type: string
     description: Repository path containing manifests
-    default: docker
+    default: k8s/argocd
+  - name: image-name
+    type: string
+    description: Container image repository (e.g. muretimiriti/bustani)
+  - name: image-tag
+    type: string
+    description: Container image tag to deploy
+    default: latest
   - name: destination-namespace
     type: string
     description: Destination namespace for deployed resources
@@ -47,6 +54,9 @@ spec:
           repoURL: $(params.repo-url)
           targetRevision: $(params.target-revision)
           path: $(params.app-path)
+          kustomize:
+            images:
+            - bustani=$(params.image-name):$(params.image-tag)
         destination:
           server: https://kubernetes.default.svc
           namespace: $(params.destination-namespace)
