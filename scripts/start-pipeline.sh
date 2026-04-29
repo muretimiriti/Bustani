@@ -218,7 +218,7 @@ install_argocd() {
         log_success "Argo CD already installed"
     else
         log_info "Installing Argo CD..."
-        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        kubectl apply --server-side --force-conflicts -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
         kubectl wait --for=condition=available deployment/argocd-server -n argocd --timeout=300s
         log_success "Argo CD installed successfully"
     fi
