@@ -361,11 +361,11 @@ spec:
                         name: github
                     params:
                         - name: secretRef
-                            value:
-                                secretName: github-webhook-secret
-                                secretKey: secretToken
+                            value: github-webhook-secret
                         - name: eventTypes
-                            value: ["push", "pull_request"]
+                            value:
+                                - push
+                                - pull_request
                 - ref:
                         name: cel
                     params:
@@ -966,7 +966,7 @@ main() {
     local argocd=true
     local ingress_forward=true
     local app_forward=true
-    local webhook_trigger=true
+    local webhook_trigger=false
     
     while [[ $# -gt 0 ]]; do
         case $1 in
