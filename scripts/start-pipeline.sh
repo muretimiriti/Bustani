@@ -666,25 +666,36 @@ EOF
 
 start_dashboard_portforward() {
     log_info "Setting up Tekton Dashboard port-forward..."
-    
-    # Kill any existing port-forward on that port
-    if lsof -ti:$DASHBOARD_LOCAL_PORT &> /dev/null; then
-        log_warning "Port $DASHBOARD_LOCAL_PORT already in use. Stopping existing process..."
+
+    # Wait for tekton-dashboard service to exist
+    if ! kubectl get svc tekton-dashboard -n tekton-pipelines &>/dev/null; then
+        log_warning "Tekton Dashboard service not found — skipping dashboard port-forward"
+        return
+    fi
+
+    # Kill any stale process on the preferred port before port scanning
+    if lsof -ti:$DASHBOARD_LOCAL_PORT &>/dev/null; then
+        log_warning "Port $DASHBOARD_LOCAL_PORT busy — releasing..."
         kill "$(lsof -ti:$DASHBOARD_LOCAL_PORT)" 2>/dev/null || true
         sleep 1
     fi
-    
-    # Start port-forward in background
+
+    local selected_port
+    selected_port="$(find_available_port "$DASHBOARD_LOCAL_PORT" "Tekton Dashboard")" || {
+        log_warning "Could not find an available local port for Tekton Dashboard port-forward"
+        return
+    }
+    DASHBOARD_LOCAL_PORT="$selected_port"
+
     nohup kubectl port-forward \
         -n tekton-pipelines \
         svc/tekton-dashboard \
         ${DASHBOARD_LOCAL_PORT}:9097 \
         > /tmp/tekton-dashboard-pf.log 2>&1 &
-    
+
     DASHBOARD_PF_PID=$!
     sleep 2
-    
-    # Verify port-forward started successfully
+
     if kill -0 $DASHBOARD_PF_PID 2>/dev/null; then
         echo ""
         echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
@@ -696,20 +707,33 @@ start_dashboard_portforward() {
         echo -e "${GREEN}║  To stop:  kill $DASHBOARD_PF_PID                                 ║${NC}"
         echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
         echo ""
-        
     else
-        log_warning "Port-forward may have failed. Check logs: /tmp/tekton-dashboard-pf.log"
+        log_warning "Dashboard port-forward failed. Check: /tmp/tekton-dashboard-pf.log"
     fi
 }
 
 start_argocd_portforward() {
     log_info "Setting up Argo CD port-forward..."
 
-    if lsof -ti:$ARGOCD_LOCAL_PORT &> /dev/null; then
-        log_warning "Port $ARGOCD_LOCAL_PORT already in use. Stopping existing process..."
+    # Wait for argocd-server service to exist
+    if ! kubectl get svc argocd-server -n argocd &>/dev/null; then
+        log_warning "Argo CD server service not found — skipping ArgoCD port-forward"
+        return
+    fi
+
+    # Kill any stale process on the preferred port before port scanning
+    if lsof -ti:$ARGOCD_LOCAL_PORT &>/dev/null; then
+        log_warning "Port $ARGOCD_LOCAL_PORT busy — releasing..."
         kill "$(lsof -ti:$ARGOCD_LOCAL_PORT)" 2>/dev/null || true
         sleep 1
     fi
+
+    local selected_port
+    selected_port="$(find_available_port "$ARGOCD_LOCAL_PORT" "Argo CD")" || {
+        log_warning "Could not find an available local port for Argo CD port-forward"
+        return
+    }
+    ARGOCD_LOCAL_PORT="$selected_port"
 
     nohup kubectl port-forward -n argocd svc/argocd-server ${ARGOCD_LOCAL_PORT}:443 > /tmp/argocd-pf.log 2>&1 &
     ARGOCD_PF_PID=$!
@@ -717,13 +741,19 @@ start_argocd_portforward() {
 
     if kill -0 $ARGOCD_PF_PID 2>/dev/null; then
         echo ""
-        echo -e "${GREEN}Argo CD UI:${NC} https://localhost:${ARGOCD_LOCAL_PORT}"
-        echo -e "${GREEN}Argo CD Port-forward PID:${NC} $ARGOCD_PF_PID"
+        echo -e "${GREEN}╔══════════════════════════════════════════════════════════╗${NC}"
+        echo -e "${GREEN}║         Argo CD Dashboard is ready!                      ║${NC}"
+        echo -e "${GREEN}║                                                          ║${NC}"
+        echo -e "${GREEN}║  Open in browser: https://localhost:${ARGOCD_LOCAL_PORT}             ║${NC}"
+        echo -e "${GREEN}║                                                          ║${NC}"
+        echo -e "${GREEN}║  Port-forward PID: $ARGOCD_PF_PID                               ║${NC}"
+        echo -e "${GREEN}╚══════════════════════════════════════════════════════════╝${NC}"
+        echo ""
         echo -e "${BLUE}Get Argo CD admin password:${NC}"
         echo "  kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d; echo"
         echo ""
     else
-        log_warning "Argo CD port-forward may have failed. Check logs: /tmp/argocd-pf.log"
+        log_warning "Argo CD port-forward failed. Check: /tmp/argocd-pf.log"
     fi
 }
 
