@@ -14,9 +14,11 @@ spec:
       labels:
         app: bustani
     spec:
+      imagePullSecrets:
+        - name: docker-registry
       containers:
         - name: bustani
-          image: bustani:latest
+          image: muretimiriti/bustani:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 3000

@@ -4,3 +4,9 @@ resources:
   - deployment.yaml
   - service.yaml
   - ingress.yaml
+
+# Support image tag replacement from ArgoCD
+images:
+  - name: bustani
+    newName: muretimiriti/bustani
+    newTag: latest
