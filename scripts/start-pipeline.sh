@@ -30,6 +30,10 @@ INGRESS_LOCAL_PORT="${INGRESS_LOCAL_PORT:-8081}"
 INGRESS_PF_PID=""
 APP_LOCAL_PORT="${APP_LOCAL_PORT:-3000}"
 APP_PF_PID=""
+WEBHOOK_LOCAL_PORT="${WEBHOOK_LOCAL_PORT:-8085}"
+WEBHOOK_SECRET="${GITHUB_WEBHOOK_SECRET:-}"
+WEBHOOK_PUBLIC_URL="${WEBHOOK_PUBLIC_URL:-}"
+GITHUB_WEBHOOK_TOKEN="${GITHUB_WEBHOOK_TOKEN:-${GITHUB_TOKEN:-${GIT_TOKEN:-}}}"
 
 # Functions
 log_info() {
@@ -46,6 +50,28 @@ log_warning() {
 
 log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
+}
+
+find_available_port() {
+    local preferred_port="$1"
+    local port_label="$2"
+    local max_checks=30
+    local candidate_port="$preferred_port"
+    local checks=0
+
+    while [ $checks -lt $max_checks ]; do
+        if ! lsof -ti:"$candidate_port" &> /dev/null; then
+            if [ "$candidate_port" != "$preferred_port" ]; then
+                log_warning "$port_label port $preferred_port is in use. Using $candidate_port instead."
+            fi
+            echo "$candidate_port"
+            return 0
+        fi
+        candidate_port=$((candidate_port + 1))
+        checks=$((checks + 1))
+    done
+
+    return 1
 }
 
 check_dependencies() {
@@ -206,6 +232,272 @@ install_tekton() {
         log_success "Tekton Dashboard installed successfully"
     else
         log_success "Tekton Dashboard already installed"
+    fi
+}
+
+install_tekton_triggers() {
+        log_info "Checking if Tekton Triggers is installed..."
+
+        kubectl get namespace tekton-pipelines >/dev/null 2>&1 || kubectl create namespace tekton-pipelines
+
+        if kubectl get deployment tekton-triggers-controller -n tekton-pipelines >/dev/null 2>&1; then
+                log_success "Tekton Triggers already installed"
+        else
+                log_info "Installing Tekton Triggers..."
+                kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+                kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
+                kubectl wait --for=condition=available deployment/tekton-triggers-controller -n tekton-pipelines --timeout=300s
+                log_success "Tekton Triggers installed successfully"
+        fi
+}
+
+setup_github_webhook_trigger() {
+        log_info "Configuring GitHub push/pull_request webhook trigger..."
+
+        if [[ -z "$WEBHOOK_SECRET" ]]; then
+                if command -v openssl >/dev/null 2>&1; then
+                        WEBHOOK_SECRET="$(openssl rand -hex 16)"
+                else
+                        WEBHOOK_SECRET="$(date +%s | sha256sum | awk '{print $1}' | cut -c1-32)"
+                fi
+                log_warning "GITHUB_WEBHOOK_SECRET not set; generated a random secret for this setup"
+        fi
+
+        kubectl create secret generic github-webhook-secret \
+                --from-literal=secretToken="$WEBHOOK_SECRET" \
+                -n "$NAMESPACE" \
+                --dry-run=client -o yaml | kubectl apply -f - >/dev/null
+
+        cat <<EOF | kubectl apply -n "$NAMESPACE" -f -
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+    name: bustani-github-trigger-template
+spec:
+    params:
+        - name: git-repository
+            description: Repository URL
+        - name: git-revision
+            description: Branch ref
+        - name: git-username
+            description: Repo owner/user
+        - name: image-name
+            description: Image name
+        - name: image-tag
+            description: Image tag
+        - name: namespace
+            description: Kubernetes namespace
+        - name: argocd-app-name
+            description: ArgoCD app name
+    resourcetemplates:
+        - apiVersion: tekton.dev/v1beta1
+            kind: PipelineRun
+            metadata:
+                generateName: bustani-webhook-run-
+                namespace: $NAMESPACE
+            spec:
+                pipelineRef:
+                    name: $PIPELINE_NAME
+                serviceAccountName: tekton-sa
+                timeout: 30m
+                params:
+                    - name: git-repository
+                        value: \$(tt.params.git-repository)
+                    - name: git-revision
+                        value: \$(tt.params.git-revision)
+                    - name: git-username
+                        value: \$(tt.params.git-username)
+                    - name: image-name
+                        value: \$(tt.params.image-name)
+                    - name: image-tag
+                        value: \$(tt.params.image-tag)
+                    - name: trivy-severity
+                        value: CRITICAL,HIGH
+                    - name: namespace
+                        value: \$(tt.params.namespace)
+                    - name: argocd-app-name
+                        value: \$(tt.params.argocd-app-name)
+                workspaces:
+                    - name: shared-workspace
+                        volumeClaimTemplate:
+                            spec:
+                                accessModes: ["ReadWriteOnce"]
+                                resources:
+                                    requests:
+                                        storage: 1Gi
+                                storageClassName: standard
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+    name: bustani-github-trigger-binding
+spec:
+    params:
+        - name: git-repository
+            value: \$(extensions.repo_url)
+        - name: git-revision
+            value: \$(extensions.git_revision)
+        - name: git-username
+            value: \$(extensions.git_username)
+        - name: image-name
+            value: $IMAGE_NAME
+        - name: image-tag
+            value: $IMAGE_TAG
+        - name: namespace
+            value: $NAMESPACE
+        - name: argocd-app-name
+            value: $ARGOCD_APP_NAME
+---
+apiVersion: triggers.tekton.dev/v1beta1
+kind: EventListener
+metadata:
+    name: bustani-github-listener
+spec:
+    serviceAccountName: tekton-sa
+    triggers:
+        - name: bustani-on-push-or-pr
+            interceptors:
+                - ref:
+                        name: github
+                    params:
+                        - name: secretRef
+                            value:
+                                secretName: github-webhook-secret
+                                secretKey: secretToken
+                        - name: eventTypes
+                            value: ["push", "pull_request"]
+                - ref:
+                        name: cel
+                    params:
+                        - name: filter
+                            value: "header.match('X-GitHub-Event', 'push') || (header.match('X-GitHub-Event', 'pull_request') && (body.action == 'opened' || body.action == 'synchronize' || body.action == 'reopened'))"
+                        - name: overlays
+                            value:
+                                - key: git_revision
+                                    expression: "header.match('X-GitHub-Event', 'push') ? body.ref.split('/')[2] : body.pull_request.head.ref"
+                                - key: git_username
+                                    expression: "body.repository.owner.login"
+                                - key: repo_url
+                                    expression: "body.repository.clone_url"
+            bindings:
+                - ref: bustani-github-trigger-binding
+            template:
+                ref: bustani-github-trigger-template
+EOF
+
+        local listener_service="el-bustani-github-listener"
+        log_success "GitHub webhook trigger configured"
+        echo -e "${GREEN}Webhook listener service:${NC} $listener_service.$NAMESPACE.svc"
+        echo -e "${BLUE}Port-forward for local testing:${NC} kubectl port-forward -n $NAMESPACE svc/$listener_service ${WEBHOOK_LOCAL_PORT}:8080"
+        echo -e "${BLUE}GitHub webhook endpoint path:${NC} /"
+        echo -e "${BLUE}Webhook secret token:${NC} $WEBHOOK_SECRET"
+        echo -e "${YELLOW}Note:${NC} For GitHub to reach your listener from the internet, expose this endpoint with an ingress/public URL or a tunnel (for example ngrok/cloudflared)."
+}
+
+setup_github_repository_webhook() {
+    log_info "Configuring GitHub repository webhook..."
+
+    if [[ ! "$GIT_REPO" =~ github\.com ]]; then
+        log_warning "Repository is not on GitHub; skipping automatic webhook creation"
+        return
+    fi
+
+    if [[ -z "$WEBHOOK_PUBLIC_URL" ]]; then
+        log_warning "WEBHOOK_PUBLIC_URL is not set; skipping GitHub webhook creation"
+        log_info "Set WEBHOOK_PUBLIC_URL to your public EventListener URL and rerun with --webhook-trigger"
+        return
+    fi
+
+    if [[ -z "$GITHUB_WEBHOOK_TOKEN" ]]; then
+        log_warning "No GitHub API token found (GITHUB_WEBHOOK_TOKEN/GITHUB_TOKEN/GIT_TOKEN); skipping webhook creation"
+        return
+    fi
+
+    local owner=""
+    local repo=""
+
+    if [[ "$GIT_REPO" =~ ^https://github.com/([^/]+)/([^/.]+)(\.git)?$ ]]; then
+        owner="${BASH_REMATCH[1]}"
+        repo="${BASH_REMATCH[2]}"
+    elif [[ "$GIT_REPO" =~ ^git@github.com:([^/]+)/([^/.]+)(\.git)?$ ]]; then
+        owner="${BASH_REMATCH[1]}"
+        repo="${BASH_REMATCH[2]}"
+    fi
+
+    if [[ -z "$owner" || -z "$repo" ]]; then
+        log_warning "Could not parse GitHub owner/repo from $GIT_REPO"
+        return
+    fi
+
+    local normalized_url
+    normalized_url="${WEBHOOK_PUBLIC_URL%/}"
+
+    local payload
+    payload="$(webhook_url="$normalized_url" webhook_secret="$WEBHOOK_SECRET" python3 - <<'PY'
+import json, os
+print(json.dumps({
+    "name": "web",
+    "active": True,
+    "events": ["push", "pull_request"],
+    "config": {
+        "url": os.environ["webhook_url"],
+        "content_type": "json",
+        "secret": os.environ.get("webhook_secret", ""),
+        "insecure_ssl": "0"
+    }
+}))
+PY
+)"
+
+    local hooks_json
+    hooks_json="$(curl -sS \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer $GITHUB_WEBHOOK_TOKEN" \
+        "https://api.github.com/repos/$owner/$repo/hooks")"
+
+    local existing_hook_id
+    existing_hook_id="$(echo "$hooks_json" | webhook_url="$normalized_url" python3 - <<'PY'
+import json, os, sys
+target = os.environ["webhook_url"].rstrip("/")
+try:
+    hooks = json.load(sys.stdin)
+except Exception:
+    print("")
+    raise SystemExit(0)
+if isinstance(hooks, list):
+    for hook in hooks:
+        cfg = (hook or {}).get("config") or {}
+        url = (cfg.get("url") or "").rstrip("/")
+        if url == target:
+            print(hook.get("id", ""))
+            break
+PY
+)"
+
+    local response_file
+    response_file="/tmp/github-webhook-response.json"
+    local http_code
+
+    if [[ -n "$existing_hook_id" ]]; then
+        http_code="$(curl -sS -o "$response_file" -w "%{http_code}" -X PATCH \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_WEBHOOK_TOKEN" \
+            "https://api.github.com/repos/$owner/$repo/hooks/$existing_hook_id" \
+            -d "$payload")"
+    else
+        http_code="$(curl -sS -o "$response_file" -w "%{http_code}" -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GITHUB_WEBHOOK_TOKEN" \
+            "https://api.github.com/repos/$owner/$repo/hooks" \
+            -d "$payload")"
+    fi
+
+    if [[ "$http_code" =~ ^2 ]]; then
+        log_success "GitHub webhook is configured for push and pull_request events"
+        echo -e "${GREEN}Webhook URL:${NC} $normalized_url"
+    else
+        log_warning "GitHub webhook creation/update failed (HTTP $http_code). Response:"
+        cat "$response_file"
     fi
 }
 
@@ -440,11 +732,12 @@ start_ingress_portforward() {
 
     kubectl wait --for=condition=available deployment/ingress-nginx-controller -n ingress-nginx --timeout=300s >/dev/null 2>&1 || true
 
-    if lsof -ti:$INGRESS_LOCAL_PORT &> /dev/null; then
-        log_warning "Port $INGRESS_LOCAL_PORT already in use. Stopping existing process..."
-        kill "$(lsof -ti:$INGRESS_LOCAL_PORT)" 2>/dev/null || true
-        sleep 1
-    fi
+    local selected_port
+    selected_port="$(find_available_port "$INGRESS_LOCAL_PORT" "Ingress")" || {
+        log_warning "Could not find an available local port for ingress port-forward"
+        return
+    }
+    INGRESS_LOCAL_PORT="$selected_port"
 
     local attempts=0
     while [ $attempts -lt 12 ]; do
@@ -457,6 +750,12 @@ start_ingress_portforward() {
             echo -e "${GREEN}Ingress PF PID:${NC} $INGRESS_PF_PID"
             echo -e "${BLUE}Host mapping:${NC} echo '127.0.0.1 bustani.local' | sudo tee -a /etc/hosts"
             return
+        fi
+
+        if grep -q "unable to listen on any of the requested ports" /tmp/ingress-nginx-pf.log 2>/dev/null; then
+            selected_port="$(find_available_port "$((INGRESS_LOCAL_PORT + 1))" "Ingress")" || break
+            INGRESS_LOCAL_PORT="$selected_port"
+            log_warning "Retrying ingress port-forward on local port $INGRESS_LOCAL_PORT"
         fi
 
         attempts=$((attempts + 1))
@@ -480,27 +779,41 @@ start_app_portforward() {
         sleep 6
     done
 
-    if lsof -ti:$APP_LOCAL_PORT &> /dev/null; then
-        log_warning "Port $APP_LOCAL_PORT already in use. Stopping existing process..."
-        kill "$(lsof -ti:$APP_LOCAL_PORT)" 2>/dev/null || true
-        sleep 1
-    fi
-
     if ! kubectl get svc -n "$NAMESPACE" bustani-app >/dev/null 2>&1; then
         log_warning "App service bustani-app is not available yet; skipping app port-forward for now"
         return
     fi
 
-    nohup kubectl port-forward -n "$NAMESPACE" svc/bustani-app ${APP_LOCAL_PORT}:80 > /tmp/bustani-app-pf.log 2>&1 &
-    APP_PF_PID=$!
-    sleep 2
+    local selected_port
+    selected_port="$(find_available_port "$APP_LOCAL_PORT" "App")" || {
+        log_warning "Could not find an available local port for app port-forward"
+        return
+    }
+    APP_LOCAL_PORT="$selected_port"
 
-    if kill -0 $APP_PF_PID 2>/dev/null; then
-        echo -e "${GREEN}Bustani App:${NC} http://localhost:${APP_LOCAL_PORT}"
-        echo -e "${GREEN}App PF PID:${NC} $APP_PF_PID"
-    else
-        log_warning "App port-forward may have failed. Service may not be deployed yet. Check logs: /tmp/bustani-app-pf.log"
-    fi
+    local attempts=0
+    while [ $attempts -lt 8 ]; do
+        nohup kubectl port-forward -n "$NAMESPACE" svc/bustani-app ${APP_LOCAL_PORT}:80 > /tmp/bustani-app-pf.log 2>&1 &
+        APP_PF_PID=$!
+        sleep 2
+
+        if kill -0 $APP_PF_PID 2>/dev/null; then
+            echo -e "${GREEN}Bustani App:${NC} http://localhost:${APP_LOCAL_PORT}"
+            echo -e "${GREEN}App PF PID:${NC} $APP_PF_PID"
+            return
+        fi
+
+        if grep -q "unable to listen on any of the requested ports" /tmp/bustani-app-pf.log 2>/dev/null; then
+            selected_port="$(find_available_port "$((APP_LOCAL_PORT + 1))" "App")" || break
+            APP_LOCAL_PORT="$selected_port"
+            log_warning "Retrying app port-forward on local port $APP_LOCAL_PORT"
+        fi
+
+        attempts=$((attempts + 1))
+        sleep 2
+    done
+
+    log_warning "App port-forward may have failed. Service may not be deployed yet. Check logs: /tmp/bustani-app-pf.log"
 }
 
 monitor_pipeline() {
@@ -518,6 +831,9 @@ monitor_pipeline() {
     echo ""
     echo -e "${BLUE}Ingress host mapping (after deploy):${NC}"
     echo "  echo '127.0.0.1 bustani.local' | sudo tee -a /etc/hosts"
+    echo ""
+    echo -e "${BLUE}Webhook-triggered PipelineRuns:${NC}"
+    echo "  kubectl get pipelinerun -n $NAMESPACE --sort-by=.metadata.creationTimestamp"
     echo ""
 }
 
@@ -546,6 +862,10 @@ Options:
     --app-forward           Start bustani app service port-forward (default: enabled)
     --no-app-forward        Skip bustani app service port-forward
     --app-port PORT         Local port for bustani app service (default: 3000)
+    --webhook-trigger       Configure GitHub webhook trigger for push/pull_request (default: enabled)
+    --no-webhook-trigger    Skip webhook trigger setup
+    --webhook-port PORT     Local port for webhook listener port-forward (default: 8085)
+    --webhook-url URL       Public URL GitHub should call for webhook delivery (optional)
 
 Example:
     $0 -b develop -t v1.0.0 --monitor
@@ -567,6 +887,7 @@ main() {
     local argocd=true
     local ingress_forward=true
     local app_forward=true
+    local webhook_trigger=true
     
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -650,6 +971,22 @@ main() {
                 APP_LOCAL_PORT="$2"
                 shift 2
                 ;;
+            --webhook-trigger)
+                webhook_trigger=true
+                shift
+                ;;
+            --no-webhook-trigger)
+                webhook_trigger=false
+                shift
+                ;;
+            --webhook-port)
+                WEBHOOK_LOCAL_PORT="$2"
+                shift 2
+                ;;
+            --webhook-url)
+                WEBHOOK_PUBLIC_URL="$2"
+                shift 2
+                ;;
             *)
                 log_error "Unknown option: $1"
                 show_usage
@@ -668,6 +1005,7 @@ main() {
     
     if [ "$skip_install" != true ]; then
         install_tekton
+        install_tekton_triggers
         install_argocd
         install_ingress_controller
     fi
@@ -676,6 +1014,11 @@ main() {
     apply_tasks
     apply_pipeline
     create_pipelinerun
+
+    if [ "$webhook_trigger" = true ]; then
+        setup_github_webhook_trigger
+        setup_github_repository_webhook
+    fi
     
     echo ""
     log_success "Pipeline started successfully!"
