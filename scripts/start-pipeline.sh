@@ -793,6 +793,7 @@ start_ingress_portforward() {
     done
 
     log_warning "Ingress port-forward may have failed after retries. Check logs: /tmp/ingress-nginx-pf.log"
+    INGRESS_PF_PID=""
 }
 
 start_app_portforward() {
@@ -811,12 +812,14 @@ start_app_portforward() {
 
     if ! kubectl get svc -n "$NAMESPACE" bustani-app >/dev/null 2>&1; then
         log_warning "App service bustani-app is not available yet; skipping app port-forward for now"
+        APP_PF_PID=""
         return
     fi
 
     local selected_port
     selected_port="$(find_available_port "$APP_LOCAL_PORT" "App")" || {
         log_warning "Could not find an available local port for app port-forward"
+        APP_PF_PID=""
         return
     }
     APP_LOCAL_PORT="$selected_port"
@@ -844,6 +847,52 @@ start_app_portforward() {
     done
 
     log_warning "App port-forward may have failed. Service may not be deployed yet. Check logs: /tmp/bustani-app-pf.log"
+    APP_PF_PID=""
+}
+
+show_access_points() {
+    echo ""
+    echo -e "${GREEN}╔═════════════════════════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║                   ACCESS POINTS & PORT FORWARDING SUMMARY                      ║${NC}"
+    echo -e "${GREEN}╚═════════════════════════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    
+    if [[ -n "$DASHBOARD_PF_PID" ]] && kill -0 $DASHBOARD_PF_PID 2>/dev/null; then
+        echo -e "${GREEN}✓${NC} ${BLUE}Tekton Dashboard:${NC}"
+        echo "  URL: http://localhost:${DASHBOARD_LOCAL_PORT}"
+        echo "  PID: $DASHBOARD_PF_PID"
+        echo ""
+    fi
+    
+    if [[ -n "$ARGOCD_PF_PID" ]] && kill -0 $ARGOCD_PF_PID 2>/dev/null; then
+        echo -e "${GREEN}✓${NC} ${BLUE}Argo CD Dashboard:${NC}"
+        echo "  URL: https://localhost:${ARGOCD_LOCAL_PORT}"
+        echo "  PID: $ARGOCD_PF_PID"
+        echo "  Login: admin / \$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)"
+        echo ""
+    fi
+    
+    if [[ -n "$INGRESS_PF_PID" ]] && kill -0 $INGRESS_PF_PID 2>/dev/null; then
+        echo -e "${GREEN}✓${NC} ${BLUE}Ingress Controller:${NC}"
+        echo "  URL: http://localhost:${INGRESS_LOCAL_PORT}"
+        echo "  PID: $INGRESS_PF_PID"
+        echo "  Host mapping: echo '127.0.0.1 bustani.local' | sudo tee -a /etc/hosts"
+        echo ""
+    fi
+    
+    if [[ -n "$APP_PF_PID" ]] && kill -0 $APP_PF_PID 2>/dev/null; then
+        echo -e "${GREEN}✓${NC} ${BLUE}Bustani Application:${NC}"
+        echo "  URL: http://localhost:${APP_LOCAL_PORT}"
+        echo "  PID: $APP_PF_PID"
+        echo ""
+    fi
+    
+    echo -e "${YELLOW}To kill any port-forward, run:${NC}"
+    echo "  kill <PID>"
+    echo ""
+    echo -e "${YELLOW}To check port-forward logs:${NC}"
+    echo "  tail -f /tmp/*-pf.log"
+    echo ""
 }
 
 monitor_pipeline() {
@@ -1071,6 +1120,9 @@ main() {
     if [ "$app_forward" = true ]; then
         start_app_portforward
     fi
+    
+    # Show all access points
+    show_access_points
     
     if [ "$monitor" = true ]; then
         echo "Starting log monitoring... (Press Ctrl+C to stop)"
